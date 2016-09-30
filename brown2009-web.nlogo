@@ -34,7 +34,7 @@ patches-own [
 ]
 
 
-globals [ 
+globals [
   count-patches  ; assign to variable to improve speed; used in setup and plots
   beta-food
   delta-toxin
@@ -49,7 +49,7 @@ globals [
   per-capita-tau-err               ; last per-capita-err used when calculating tau-leap
   per-capita-max-rates             ; latest max-rate for each event
   per-capita-highest-max-rate      ; fastest rate so far in current run
-  ; Error estimates, from max probability of event; 
+  ; Error estimates, from max probability of event;
   ; perfect SSA would approach limit max-rate --> 0.
   per-capita-last-error            ; error in last iteration
   per-capita-worst-error           ; worst error so far in current run
@@ -68,7 +68,7 @@ to startup
   setup
 end
 
- 
+
 to setup
   clear-all
   set fast-rate 5 ; TO DO: how big does this need to be to satisfy QSSA?
@@ -83,7 +83,7 @@ to setup
   ; create numbers of each breed to get the desired average density (per patch)
   create-wilds       ( W-num * count-patches ) [ set color green ]
   create-cheaters    ( C-num * count-patches ) [ set color red   ]
-  ; shuffle them 
+  ; shuffle them
   ask turtles [ setxy random-xcor random-ycor ]
   ask patches [
     ; start with QSSA densities of food, toxin, & bacteriocide
@@ -101,13 +101,13 @@ to setup
   output-wrap 26 ; set wrapping column
   output-wrap "An agent-based model of 'Social evolution in micro-organisms and a Trojan horse approach to medical intervention strategies' by Brown et al. (2009)."
   output-wrap "Press go to get started.\n"
-  
+
   ; merge all events into one master list [2013-07-29]
   add-per-capita-event turtles                  ; N -> 2 N @ rate 1
-    task [ 1 ] 
+    task [ 1 ]
     task [ hatch 1 ]
   add-per-capita-event turtles                  ; N + N -> N @ rate 1
-    task [ count other turtles-here ] 
+    task [ count other turtles-here ]
     task [ die ]
   add-per-capita-event turtles                  ; N + F -> 2 N @ rate beta
     task [ beta-food * food ]
@@ -115,7 +115,7 @@ to setup
            hatch 1           ]
   add-per-capita-event turtles                  ; N + T -> 0 @ rate delta
     task [ delta-toxin * toxin ]
-    task [ set toxin toxin - 1    
+    task [ set toxin toxin - 1
            die                 ]
   add-per-capita-event wilds                    ; W -> 0 @ rate x
     task [ x-wild-cost ]
@@ -125,7 +125,7 @@ to setup
     task [ set food food + 1 ]
   add-per-capita-event wilds                    ; W + B -> 0 @ rate gamma
     task [ gamma-bacteriocide * bacteriocide ]
-    task [ set bacteriocide bacteriocide - 1    
+    task [ set bacteriocide bacteriocide - 1
            die                               ]
   add-per-capita-event cheaters                 ; C -> 0 @ rate q
     task [ q-cheater-cost ]
@@ -143,8 +143,8 @@ end
 
 
 to go
-  if ticks = 0 [ 
-    reset-timer 
+  if ticks = 0 [
+    reset-timer
     output-wrap "You may adjust all parameters while the simulation runs."
     output-wrap "Compare the numeric, non-spatial (faint) vs. agent-based (bold) dynamics in the graphs."
     output-wrap ( word "It is assumed that the wild type is " wild-virulence " times as virulent as the cheater.\n" )
@@ -155,7 +155,7 @@ to go
   do-plots
   if (dt = 0) [  ; simulation over
     output-wrap (word "Finished in " timer " seconds.")
-    stop 
+    stop
   ]
 end
 
@@ -212,17 +212,17 @@ end
 ; Known limitations:
 ;
 ;   2013-08-02 - doesn't consider spatial boundaries/restrictions
-; 
+;
 ; Revisions:
 ;
 ;   2013-08-02 - initial release by Rik Blok
 ;-------------------------------------------------------------------------------
 
 
-to diffuse-individual [ 
-    diffuse-individual-agents 
-    diffuse-individual-diff-const 
-    diffuse-individual-dt 
+to diffuse-individual [
+    diffuse-individual-agents
+    diffuse-individual-diff-const
+    diffuse-individual-dt
 ]
   if-else (diffuse-individual-diff-const = 0)
   [
@@ -233,10 +233,10 @@ to diffuse-individual [
     ; see http://en.wikipedia.org/wiki/Random_walk#Relation_to_Wiener_process
     ; TODO: check, is this exactly the diffusion constant?
     let jump-size sqrt ( 4 * diffuse-individual-diff-const * diffuse-individual-dt )
-    ask diffuse-individual-agents 
+    ask diffuse-individual-agents
     [
-      set heading random 360 
-      jump jump-size 
+      set heading random 360
+      jump jump-size
     ]
   ]
 end
@@ -257,11 +257,11 @@ end
 ; Usage:
 ;
 ;   ; two ways to instruct output-wrap to wrap lines at _column_
-;   set output-wrap-at _column_ 
+;   set output-wrap-at _column_
 ;   output-wrap _column_
 ;
 ;   ; write _string_ to output, wrapping at/before indicated column
-;   output-wrap _string_        
+;   output-wrap _string_
 ;
 ; Example:
 ;
@@ -276,21 +276,21 @@ end
 ; Known limitations:
 ;
 ;   2013-07-31 - doesn't recognize "\n" line breaks
-; 
+;
 ; Revisions:
 ;
 ;   2013-07-31 - initial release by Rik Blok
 ;-------------------------------------------------------------------------------
 
 
-; To discover the number of characters that will fit on one line (the best 
+; To discover the number of characters that will fit on one line (the best
 ; column to wrap at), in Command Center enter something like
 ;   output-print "123456789a123456789b123456789c123456789d123456789e123456789"
 ; and count the number of characters before the output box first breaks the line.
 
 to output-wrap [ string ]
 ; wrap string into lines that fit at specified column
-  
+
   ; set column to wrap at?
   if (is-number? string and string > 0) [
     set output-wrap-at string
@@ -323,25 +323,25 @@ end
 ;==================== end output-wrap.nls ======================================
 
 ;==================== begin per-capita-tau-leaping.nls =========================
-; per-capita-tau-leaping - A variant tau-leaping algorithm to approximate 
-; Gillespie's Stochastic Simulation Algorithm (SSA).  
+; per-capita-tau-leaping - A variant tau-leaping algorithm to approximate
+; Gillespie's Stochastic Simulation Algorithm (SSA).
 ;
-; This "per-capita" tau leaping algorithm is different than the standard 
-; method [Cao2007]: it is not yet known if it contains any flaws or biases that 
+; This "per-capita" tau leaping algorithm is different than the standard
+; method [Cao2007]: it is not yet known if it contains any flaws or biases that
 ; would invalidate it as an approximation of Gillespie's SSA.  The performance
 ; of this method as compared to [Cao2007] is also unknown -- it is entirely
 ; possible that it is slow *and* wrong.
 ;
 ; In this method, events are agent-based, with a focal agent (one of the
-; reactants.  The focal agent determines the propensity (per capita) of the 
-; reaction and the actions to take.  The leap condition is that it should be 
+; reactants.  The focal agent determines the propensity (per capita) of the
+; reaction and the actions to take.  The leap condition is that it should be
 ; rare for each reaction to occur (where "rare" is defined by an error
-; tolerance). 
+; tolerance).
 ;
-; [Cao2007] Cao, Yang, Daniel T. Gillespie, and Linda R. Petzold. 2007. 
-;   "Adaptive Explicit-implicit Tau-leaping Method with Automatic Tau 
-;   Selection." The Journal of Chemical Physics 126 (22): 224101. 
-;   doi:10.1063/1.2745299. 
+; [Cao2007] Cao, Yang, Daniel T. Gillespie, and Linda R. Petzold. 2007.
+;   "Adaptive Explicit-implicit Tau-leaping Method with Automatic Tau
+;   Selection." The Journal of Chemical Physics 126 (22): 224101.
+;   doi:10.1063/1.2745299.
 ;   http://link.aip.org/link/JCPSA6/v126/i22/p224101/s1&Agg=doi.
 ;
 ; By Rik Blok, 2013 <http://www.zoology.ubc.ca/~rikblok/wiki/doku.php>
@@ -355,7 +355,7 @@ end
 ;
 ; Usage:
 ;
-;   ; add an event for _breed_ with per-capita _rate_ and _actions_ to the list 
+;   ; add an event for _breed_ with per-capita _rate_ and _actions_ to the list
 ;   add-per-capita-event _breed_ task [ _rate_ ] task [ _actions_ ]
 ;
 ;   ; one iteration of per-capita tau leaping algorithm (faster, less accurate)
@@ -415,9 +415,9 @@ end
 ;   2013-12-12
 ;     * only supports breeds, not agentsets. TODO: replace breed with agentset task.
 ;   2013-07-31
-;     * This "per-capita" tau-leaping algorithm has not been studied.  It may 
+;     * This "per-capita" tau-leaping algorithm has not been studied.  It may
 ;       contain flaws or biases.
-; 
+;
 ; Revisions:
 ;
 ;   2013-12-13
@@ -434,36 +434,36 @@ end
 ;     * shuffles event list on each timestep to reduce deterministic artefacts
 ;     * fix: run action last, after all book-keeping in per-capita-tau-leap
 ;       in case action is 'die'
-;   2013-10-24 
+;   2013-10-24
 ;     * fix: can't trust dt passed to per-capita-tau-leap to be zero on
 ;       first call.  For instance, if system-dynamics-setup is called.
 ;       Now recalculates dt every time error tolerance changes
 ;       (including first call).
-;   2013-08-02 
+;   2013-08-02
 ;     * added event counts and error reporters
-;   2013-07-31 
+;   2013-07-31
 ;     * initial release by Rik Blok
 ;-------------------------------------------------------------------------------
 
 
 ;-------------------------------------------------------------------------------
-to add-per-capita-event 
-; Add a per-capita event/reaction to the list.  Reactions are represented in 
+to add-per-capita-event
+; Add a per-capita event/reaction to the list.  Reactions are represented in
 ; terms of a focal reactant.
 ; Parameters:
 [ event-breed   ; breed of focal reactant
   event-rate    ; reporter task: reaction rate per focal reactant
   event-action  ; task: actions to take when event fires
 ]
-  if per-capita-events = 0 
+  if per-capita-events = 0
   [ ; create empty lists if necessary
-    set per-capita-events [] 
-    set per-capita-count-events [] 
+    set per-capita-events []
+    set per-capita-count-events []
     set per-capita-max-rates []
   ]
   ; append event to per-capita-events list
-  set per-capita-events 
-  ( lput 
+  set per-capita-events
+  ( lput
     ( list        ; per-capita-events is list of reactions.  Each reaction contains four items:
       event-breed                   ; item 0 = breed of focal reactant
       event-rate                    ; item 1 = reaction rate per focal reactant (reporter task)
@@ -485,7 +485,7 @@ end
 
 
 ;-------------------------------------------------------------------------------
-to-report per-capita-tau 
+to-report per-capita-tau
 ; Report dt that will give desired error tolerance.
 ; Parameters:
 [ per-capita-err ; desired error tolerance
@@ -501,7 +501,7 @@ to-report per-capita-tau
     ]
     ; store max-rate for this event
     set per-capita-max-rates
-    ( replace-item event-index per-capita-max-rates max-rate 
+    ( replace-item event-index per-capita-max-rates max-rate
     )
   ]
   ; remember current per-capita-err
@@ -509,14 +509,14 @@ to-report per-capita-tau
   ; max-rate for this iteration now known so can set dt to achieve desired error tolerance
   let max-rate max per-capita-max-rates
   ; if no events anticipated guess minimum safe dt from highest max-rate so far
-  if max-rate = 0 [ set max-rate per-capita-highest-max-rate ] 
+  if max-rate = 0 [ set max-rate per-capita-highest-max-rate ]
   ; report best guess of next timestep, dt
   report ifelse-value (max-rate > 0) [ per-capita-err / max-rate ] [0]
 end
 
 
 ;-------------------------------------------------------------------------------
-to per-capita-leap 
+to per-capita-leap
 ; Same as per-capita-tau-leap but throw away reported dt.
 ; Use per-capita-tau to get dt separately.
 ; Parameters:
@@ -528,9 +528,9 @@ end
 
 
 ;-------------------------------------------------------------------------------
-to-report per-capita-tau-leap 
+to-report per-capita-tau-leap
 ; Process all events, and make "best guess" for next dt.
-; Probably a little faster but less accurate than calling per-capita-leap and 
+; Probably a little faster but less accurate than calling per-capita-leap and
 ; per-capita-tau separately.
 ; Parameters:
 [ per-capita-err ; desired error tolerance
@@ -554,7 +554,7 @@ to-report per-capita-tau-leap
       ; check for error
       if this-rate * per-capita-dt > 1
       [ type "ERROR: per-capita-tau-leaping.nls @ tick " print ticks
-        type "Timestep too large.  Reduce error tolerance (currently " 
+        type "Timestep too large.  Reduce error tolerance (currently "
           type per-capita-tau-err print ")."
       ]
       ; do event?
@@ -566,23 +566,23 @@ to-report per-capita-tau-leap
     ]
     ; update per-capita-count-events list
     if event-count > 0
-    [ set per-capita-count-events 
-      ( replace-item 
-        event-index 
-        per-capita-count-events 
+    [ set per-capita-count-events
+      ( replace-item
+        event-index
+        per-capita-count-events
         ( event-count + item event-index per-capita-count-events )
       )
     ]
     ; store max-rate for this event
     set per-capita-max-rates
-    ( replace-item event-index per-capita-max-rates new-max-rate 
+    ( replace-item event-index per-capita-max-rates new-max-rate
     )
   ]
   ; update global counts
   ; max-rate for this iteration now known so can set dt to achieve desired error tolerance
   let max-rate max per-capita-max-rates
   ; new highest-max-rate?
-  if max-rate > per-capita-highest-max-rate 
+  if max-rate > per-capita-highest-max-rate
   [ set per-capita-highest-max-rate max-rate ]
   ; update error estimators
   set per-capita-last-error  max-rate * per-capita-dt
@@ -593,11 +593,11 @@ to-report per-capita-tau-leap
   [ set per-capita-mean-error-den  per-capita-mean-error-den + 1
   ]
   ; new worst max-prob?
-  if per-capita-last-error > per-capita-worst-error 
-  [ set per-capita-worst-error per-capita-last-error 
+  if per-capita-last-error > per-capita-worst-error
+  [ set per-capita-worst-error per-capita-last-error
   ]
   ; if no events anticipated guess minimum safe dt from highest max-rate so far
-  if max-rate = 0 [ set max-rate per-capita-highest-max-rate ] 
+  if max-rate = 0 [ set max-rate per-capita-highest-max-rate ]
   ; report best guess of next timestep, dt
   report ifelse-value (max-rate > 0) [ per-capita-err / max-rate ] [0]
 end
@@ -606,7 +606,7 @@ end
 ;-------------------------------------------------------------------------------
 to-report per-capita-mean-error
 ; Reports mean error over current simulation run.
-; Error estimated as last max prob of event; perfect SSA would approach 
+; Error estimated as last max prob of event; perfect SSA would approach
 ; limit max-rate --> 0.
   ; if no error information yet, report 0
   if per-capita-mean-error-den = 0 [ report 0 ]
@@ -1142,10 +1142,10 @@ A [NetLogo] model by Rik Blok.
 
 This agent-based model represents a bacterial infection as described in [[Brown2009]].  It is assumed the wild type (W) produces a public good (F) which benefits all.  To combat the infection the population is innoculated with a "cheater" strain (C).  Changes are simply represented as elementary reactions between (local) agents:
 
-  * N &rarr; 2 N    @ rate 1 (growth)
-  * W + N &rarr; N    @ rate 1 (competition)  
+  * N → 2 N    @ rate 1 (growth)
+  * W + N &rarr; N    @ rate 1 (competition)
     C + N &rarr; N    @ rate 1
-  * W &rarr; W + F    @ rate b (public good)  
+  * W &rarr; W + F    @ rate b (public good)
     W + F &rarr; 2 W    @ rate &beta;
   * W &rarr; &empty;    @ rate x (wild cost)
   * C &rarr; &empty;    @ rate q (cheater cost)
@@ -1154,14 +1154,14 @@ where N indicates an individual of either type and &empty; indicates an absence 
 
 Additionally, the cheater strain has one or more of the following traits:
 
-  * It consumes but does not produce the public good (F),  
+  * It consumes but does not produce the public good (F),
     C + F &rarr; 2 C    @ rate &beta;
-  * It produces a toxin (T) that harms all,  
-    C &rarr; C + T    @ rate a  
+  * It produces a toxin (T) that harms all,
+    C &rarr; C + T    @ rate a
     N + T &rarr; &empty;    @ rate &delta;
-  * It produces a bacteriocinogen (B) it is immune to but harms the wild type,  
-    C &rarr; C + B    @ rate e  
-    C + B &rarr; C    @ rate &gamma;  
+  * It produces a bacteriocinogen (B) it is immune to but harms the wild type,
+    C &rarr; C + B    @ rate e
+    C + B &rarr; C    @ rate &gamma;
     W + B &rarr; &empty;    @ rate &gamma;.
 
 
@@ -1171,7 +1171,7 @@ Finally, it is assumed that the wild type is more "virulent" (harmful to the hos
 
 ## How it works
 
-The simulation approximates a Poisson process for each of the above events.  The best known technique would be the Gillespie algorithm [[Gibson2000]] but it isn't well suited to NetLogo's strengths.  Instead, time proceeds in steps with multiple events occurring in each timestep.  
+The simulation approximates a Poisson process for each of the above events.  The best known technique would be the Gillespie algorithm [[Gibson2000]] but it isn't well suited to NetLogo's strengths.  Instead, time proceeds in steps with multiple events occurring in each timestep.
 
 The step size is adaptive, chosen to achieve a desired error tolerance, compared with the Gillespie algorithm.  When the error tolerance is near zero the likelihood of each event is small and we may expect just a few events to occur per timestep.  Then we're accurately -- but inefficiently -- mimicking the Gillespie algorithm.  As the tolerance increases we have more simultaneous events, lowering accuracy but increasing performance.
 
@@ -1179,7 +1179,7 @@ The step size is adaptive, chosen to achieve a desired error tolerance, compared
 
 [[Brown2009]] Brown, Sam P., West, Stuart A., Diggle, Stephen P., and Griffin, Ashleigh S. [Social evolution in micro-organisms and a Trojan horse approach to medical intervention strategies](http://rstb.royalsocietypublishing.org/content/364/1533/3157). Philosophical Transactions of the Royal Society B: Biological Sciences, 364: 3157-3168. doi:[10.1098/rstb.2009.0055](http://dx.doi.org/10.1098/rstb.2009.0055). 2009.
 
-[[Gibson2000]] Gibson, Michael A. and Bruck, Jehoshua. [Efficient Exact Stochastic Simulation of Chemical Systems with Many Species and Many Channels](http://dx.doi.org/10.1021/jp993732q). J. Phys. Chem. A, 104(9): 1876-1889. doi:[10.1021/jp993732q](http://dx.doi.org/10.1021/jp993732q). 2000. 
+[[Gibson2000]] Gibson, Michael A. and Bruck, Jehoshua. [Efficient Exact Stochastic Simulation of Chemical Systems with Many Species and Many Channels](http://dx.doi.org/10.1021/jp993732q). J. Phys. Chem. A, 104(9): 1876-1889. doi:[10.1021/jp993732q](http://dx.doi.org/10.1021/jp993732q). 2000.
 
 [[NetLogo]] Wilensky, U. NetLogo. [http://ccl.northwestern.edu/netlogo/](http://ccl.northwestern.edu/netlogo/). Center for Connected Learning and Computer-Based Modeling, Northwestern University. Evanston, IL. 1999.
 
@@ -1479,7 +1479,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.2.0
+NetLogo 5.3.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
