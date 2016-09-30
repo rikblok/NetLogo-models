@@ -1143,26 +1143,26 @@ A [NetLogo] model by Rik Blok.
 This agent-based model represents a bacterial infection as described in [[Brown2009]].  It is assumed the wild type (W) produces a public good (F) which benefits all.  To combat the infection the population is innoculated with a "cheater" strain (C).  Changes are simply represented as elementary reactions between (local) agents:
 
   * N → 2 N    @ rate 1 (growth)
-  * W + N &rarr; N    @ rate 1 (competition)
-    C + N &rarr; N    @ rate 1
-  * W &rarr; W + F    @ rate b (public good)
-    W + F &rarr; 2 W    @ rate &beta;
-  * W &rarr; &empty;    @ rate x (wild cost)
-  * C &rarr; &empty;    @ rate q (cheater cost)
+  * W + N → N    @ rate 1 (competition)
+    C + N → N    @ rate 1
+  * W → W + F    @ rate b (public good)
+    W + F → 2 W    @ rate β
+  * W → ∅    @ rate x (wild cost)
+  * C → ∅    @ rate q (cheater cost)
 
-where N indicates an individual of either type and &empty; indicates an absence of products.
+where N indicates an individual of either type and ∅ indicates an absence of products.
 
 Additionally, the cheater strain has one or more of the following traits:
 
   * It consumes but does not produce the public good (F),
-    C + F &rarr; 2 C    @ rate &beta;
+    C + F → 2 C    @ rate β
   * It produces a toxin (T) that harms all,
-    C &rarr; C + T    @ rate a
-    N + T &rarr; &empty;    @ rate &delta;
+    C → C + T    @ rate a
+    N + T → ∅    @ rate δ
   * It produces a bacteriocinogen (B) it is immune to but harms the wild type,
-    C &rarr; C + B    @ rate e
-    C + B &rarr; C    @ rate &gamma;
-    W + B &rarr; &empty;    @ rate &gamma;.
+    C → C + B    @ rate e
+    C + B → C    @ rate γ
+    W + B → ∅    @ rate γ.
 
 
 The target and infected cells are fixed whereas the virions move randomly with diffusion constant diff-const.  If 'well-mixed' is on then they are shuffled randomly in space with each timestep.
