@@ -60,7 +60,7 @@ to add-player
     create-links-with other turtles [ hide-link ]
   ]
   ; layout-circle turtles (world-width / 2 - 5)
-  repeat 50 [ layout-spring turtles links 0.2 17 1 wait 0.01 ]
+  repeat 50 [ layout-spring turtles links 0.2 17 1 ]
   ask turtles [ set label-color white ]
 end
 
