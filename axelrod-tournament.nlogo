@@ -104,6 +104,7 @@ to go
   ]
   match-partners
   ask links with [hidden? = false] [ play ]
+  if play-self [ ask turtles [ play-against-self ]]
   ask turtles [ set-label ]
   ask links with [ hidden? = false ] [ die ]
 end
@@ -170,6 +171,28 @@ to play
     set player2-last player2-next
     update-stats player1 player1-last player2-last
     update-stats player2 player2-last player1-last
+  ]
+end
+
+
+to play-against-self
+  print my-name
+  ; first round
+  let player1-last c-on-first
+  update-stats self player1-last player1-last
+
+  ; remaining rounds
+  let player1-next 0
+  repeat number-of-rounds - 1
+  [ if-else player1-last > 0
+    [ ; CC
+      set player1-next c-after-cc
+    ][
+      ; DD
+      set player1-next c-after-dd
+    ]
+    set player1-last player1-next
+    update-stats self player1-last player1-last
   ]
 end
 
@@ -288,10 +311,10 @@ C_after_DD
 -1000
 
 BUTTON
-146
+135
 26
-224
-143
+213
+137
 NIL
 add-player
 NIL
@@ -305,11 +328,11 @@ NIL
 1
 
 BUTTON
-15
-442
-148
-475
-NIL
+128
+438
+211
+471
+new-players
 reset-new-players
 NIL
 1
@@ -323,9 +346,9 @@ NIL
 
 SLIDER
 16
-353
+348
 154
-386
+381
 benefit-to-other
 benefit-to-other
 0
@@ -338,9 +361,9 @@ HORIZONTAL
 
 CHOOSER
 16
-277
+272
 154
-322
+317
 number-of-rounds
 number-of-rounds
 2 5 10 20 50 100 200 500 1000
@@ -348,9 +371,9 @@ number-of-rounds
 
 TEXTBOX
 16
-263
+258
 166
-281
+276
 Tournament:
 11
 0.0
@@ -358,9 +381,9 @@ Tournament:
 
 SLIDER
 16
-321
+316
 154
-354
+349
 cost-to-self
 cost-to-self
 0
@@ -373,9 +396,9 @@ HORIZONTAL
 
 MONITOR
 153
-277
+272
 210
-322
+317
 players
 count turtles
 17
@@ -384,9 +407,9 @@ count turtles
 
 MONITOR
 153
-321
+316
 210
-366
+361
 games
 count links
 17
@@ -395,9 +418,9 @@ count links
 
 BUTTON
 153
-365
+360
 210
-398
+413
 NIL
 go
 T
@@ -411,11 +434,11 @@ NIL
 1
 
 BUTTON
-15
-410
-148
-443
-NIL
+16
+438
+124
+471
+same-players
 reset-same-players
 NIL
 1
@@ -428,10 +451,10 @@ NIL
 1
 
 BUTTON
-146
-142
-224
-248
+135
+141
+213
+247
 random-player
 random-player
 NIL
@@ -443,6 +466,27 @@ NIL
 NIL
 NIL
 1
+
+TEXTBOX
+17
+424
+167
+442
+Restart:
+11
+0.0
+1
+
+SWITCH
+16
+380
+154
+413
+play-self
+play-self
+1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
