@@ -1,10 +1,12 @@
 turtles-own
 [ my-name
+  ; strategy
   c-on-first
   c-after-cc
   c-after-cd
   c-after-dc
   c-after-dd
+  ; statistics
   rounds-played
   rounds-cooperated
   total-score
@@ -25,6 +27,7 @@ end
 
 
 to random-player
+; create a new player with randomly-chosen strategy
   set C_on_1st   random 2 = 1
   set C_after_CC random 2 = 1
   set C_after_CD random 2 = 1
@@ -35,6 +38,7 @@ end
 
 
 to add-player
+; create a new player with strategy chosen by user
   create-turtles 1
   [ set my-name name
     ; turn switches into numbers (0=defect, 1=cooperate)
@@ -43,41 +47,42 @@ to add-player
     set c-after-cd ifelse-value C_after_CD [1][0]
     set c-after-dc ifelse-value C_after_DC [1][0]
     set c-after-dd ifelse-value C_after_DD [1][0]
-    if my-name = ""
+    if my-name = "" ; if no name build name from strategy
     [ set my-name
-      ( word ifelse-value (c-on-first > 0) ["C"]["D"]
-             ifelse-value (c-after-cc > 0) ["C"]["D"]
-             ifelse-value (c-after-cd > 0) ["C"]["D"]
-             ifelse-value (c-after-dc > 0) ["C"]["D"]
-             ifelse-value (c-after-dd > 0) ["C"]["D"]
+      ( word ifelse-value C_on_1st   ["C"]["D"]
+             ifelse-value C_after_CC ["C"]["D"]
+             ifelse-value C_after_CD ["C"]["D"]
+             ifelse-value C_after_DC ["C"]["D"]
+             ifelse-value C_after_DD ["C"]["D"]
       )
     ]
     setxy random-xcor random-ycor
     set label-color yellow
-    set-label
-    while [xcor < -10]
-    [ set xcor random-xcor ]
+    draw-node
+    while [xcor < -10] [ set xcor random-xcor ] ; shift to the right to make label visible
     create-links-with other turtles [ hide-link ]
   ]
-  ; layout-circle turtles (world-width / 2 - 5)
+  ; nudge turtles to fit new one in
   repeat 50 [ layout-spring turtles links 0.2 17 1 ]
   ask turtles [ set label-color white ]
 end
 
 
-to set-label
+to draw-node
+; update node: size indicates score and color indicates level of cooperation
   if-else rounds-played > 0
-  [ set color hsb ( 120 * avg-coop ) 75 75
+  [ set color hsb ( 120 * avg-coop ) 75 75 ; green = cooperate, red = defect
   ][
     set color gray
   ]
   ; size: -c => minimum, b => b + c + minimum
-  set size avg-score + cost-to-self + 0.01
+  set size avg-score + cost-to-self + 0.05
   set label (word my-name " (" precision avg-score 2 ")  ")
 end
 
 
 to reset-same-players
+; reset tournament but keep same players
   ask links [ die ]
   ask turtles
   [ create-links-with other turtles [ hide-link ]
@@ -86,20 +91,22 @@ to reset-same-players
     set total-score       0
     set avg-coop          0
     set avg-score         0
-    set-label
+    draw-node
   ]
+  ; space nodes out to make easier to see
+  repeat 50 [ layout-spring turtles links 0.2 17 1 ]
   print date-and-time
 end
 
 
 to go
+; the main loop.  Play pairs of strategies against each other.
+; This loop is repeated for all possible pairs.
+; When no more pairs left, tournament ends.
   if not any? links
   [ ; end of tournament
     if play-self
-    [ ask turtles
-      [ play-against-self
-        set-label
-      ]
+    [ ask turtles [ play-against-self ]
     ]
     print "Player\tCoop\tScore"
     foreach sort-on [avg-score] turtles
@@ -109,16 +116,15 @@ to go
     stop
   ]
   match-partners
-  ask links with [hidden? = false] [ play ]
-  ask turtles [ set-label ]
-  ask links with [ hidden? = false ] [ die ]
+  ask links with [hidden? = false] [ play die ]
 end
 
 
 to match-partners
+; try to find a partner for every player
   ask turtles
   [
-    ; I don't have a partner
+    ; if I don't have a partner
     if not-partnered-yet?
     [ let potential-partners link-neighbors with [ not-partnered-yet? ]
       ; and neither do you
@@ -131,11 +137,13 @@ end
 
 
 to-report not-partnered-yet?
+; reports whether player has found a partner yet
   report all? my-links [hidden? = true ]
 end
 
 
 to play
+; play two players against each other
   let players both-ends
   print [my-name] of players
   let player1 one-of players ; one end of the link
@@ -181,6 +189,8 @@ end
 
 
 to play-against-self
+; play strategy against itself.
+; The user can choose whether to allow this.
   print my-name
   ; first round
   let player1-last c-on-first
@@ -203,13 +213,14 @@ end
 
 
 to update-stats [ player my-choice your-choice ]
+; given latest round of play, update a player's statistics
   ask player
   [ set rounds-played     rounds-played     + 1
     set rounds-cooperated rounds-cooperated + my-choice
     set total-score       total-score       + benefit-to-other * your-choice - cost-to-self * my-choice
     set avg-score         total-score / rounds-played
     set avg-coop          rounds-cooperated / rounds-played
-    set-label
+    draw-node
   ]
 end
 @#$#@#$#@
@@ -269,7 +280,7 @@ SWITCH
 183
 C_after_CD
 C_after_CD
-0
+1
 1
 -1000
 
@@ -301,7 +312,7 @@ SWITCH
 215
 C_after_DC
 C_after_DC
-0
+1
 1
 -1000
 
@@ -319,7 +330,7 @@ C_after_DD
 BUTTON
 135
 26
-213
+220
 137
 NIL
 add-player
@@ -459,7 +470,7 @@ NIL
 BUTTON
 135
 141
-213
+220
 247
 random-player
 random-player
