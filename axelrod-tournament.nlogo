@@ -95,6 +95,12 @@ end
 to go
   if not any? links
   [ ; end of tournament
+    if play-self
+    [ ask turtles
+      [ play-against-self
+        set-label
+      ]
+    ]
     print "Player\tCoop\tScore"
     foreach sort-on [avg-score] turtles
     [ ask ? [ print (word my-name "\t" precision avg-coop 2 "\t" precision avg-score 2) ]
@@ -104,7 +110,6 @@ to go
   ]
   match-partners
   ask links with [hidden? = false] [ play ]
-  if play-self [ ask turtles [ play-against-self ]]
   ask turtles [ set-label ]
   ask links with [ hidden? = false ] [ die ]
 end
@@ -204,6 +209,7 @@ to update-stats [ player my-choice your-choice ]
     set total-score       total-score       + benefit-to-other * your-choice - cost-to-self * my-choice
     set avg-score         total-score / rounds-played
     set avg-coop          rounds-cooperated / rounds-played
+    set-label
   ]
 end
 @#$#@#$#@
@@ -216,7 +222,7 @@ GRAPHICS-WINDOW
 16
 13.0
 1
-17
+16
 1
 1
 1
@@ -241,7 +247,7 @@ SWITCH
 119
 C_on_1st
 C_on_1st
-0
+1
 1
 -1000
 
@@ -263,7 +269,7 @@ SWITCH
 183
 C_after_CD
 C_after_CD
-1
+0
 1
 -1000
 
@@ -484,7 +490,7 @@ SWITCH
 413
 play-self
 play-self
-1
+0
 1
 -1000
 
