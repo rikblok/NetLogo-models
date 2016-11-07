@@ -152,8 +152,8 @@ to play
   ;print (word ([my-name] of player1) " vs. " ([my-name] of player2))
 
   ; first round
-  let player1-last [c-on-first] of player1
-  let player2-last [c-on-first] of player2
+  let player1-last chance-of-error [c-on-first] of player1
+  let player2-last chance-of-error [c-on-first] of player2
   update-stats player1 player1-last player2-last
   update-stats player2 player2-last player1-last
 
@@ -164,20 +164,20 @@ to play
   [ if-else player1-last > 0
     [ if-else player2-last > 0
       [ ; CC
-        set player1-next [c-after-cc] of player1
-        set player2-next [c-after-cc] of player2
+        set player1-next chance-of-error [c-after-cc] of player1
+        set player2-next chance-of-error [c-after-cc] of player2
       ][; CD
-        set player1-next [c-after-cd] of player1
-        set player2-next [c-after-dc] of player2
+        set player1-next chance-of-error [c-after-cd] of player1
+        set player2-next chance-of-error [c-after-dc] of player2
       ]
     ][
       if-else player2-last > 0
       [ ; DC
-        set player1-next [c-after-dc] of player1
-        set player2-next [c-after-cd] of player2
+        set player1-next chance-of-error [c-after-dc] of player1
+        set player2-next chance-of-error [c-after-cd] of player2
       ][; DD
-        set player1-next [c-after-dd] of player1
-        set player2-next [c-after-dd] of player2
+        set player1-next chance-of-error [c-after-dd] of player1
+        set player2-next chance-of-error [c-after-dd] of player2
       ]
     ]
     set player1-last player1-next
@@ -191,9 +191,10 @@ end
 to play-against-self
 ; play strategy against itself.
 ; The user can choose whether to allow this.
+; Note: player is playing against a mirror.  If they make an error, so does the mirror image.
   print my-name
   ; first round
-  let player1-last c-on-first
+  let player1-last chance-of-error c-on-first
   update-stats self player1-last player1-last
 
   ; remaining rounds
@@ -201,10 +202,10 @@ to play-against-self
   repeat number-of-rounds - 1
   [ if-else player1-last > 0
     [ ; CC
-      set player1-next c-after-cc
+      set player1-next chance-of-error c-after-cc
     ][
       ; DD
-      set player1-next c-after-dd
+      set player1-next chance-of-error c-after-dd
     ]
     set player1-last player1-next
     update-stats self player1-last player1-last
@@ -223,15 +224,21 @@ to update-stats [ player my-choice your-choice ]
     draw-node
   ]
 end
+
+
+to-report chance-of-error [ correct ]
+; checks for error.  Reports "correct" if no error, otherwise reports opposite.
+  report ifelse-value (random-float 100 < errors) [ 1 - correct ][ correct ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 225
 10
-664
-470
+697
+503
 16
 16
-13.0
+14.0
 1
 16
 1
@@ -252,21 +259,21 @@ ticks
 30.0
 
 SWITCH
-15
-86
-136
-119
+9
+84
+130
+117
 C_on_1st
 C_on_1st
-1
+0
 1
 -1000
 
 SWITCH
-15
-118
-136
-151
+9
+116
+130
+149
 C_after_CC
 C_after_CC
 0
@@ -274,10 +281,10 @@ C_after_CC
 -1000
 
 SWITCH
-15
-150
-136
-183
+9
+148
+130
+181
 C_after_CD
 C_after_CD
 1
@@ -285,20 +292,20 @@ C_after_CD
 -1000
 
 TEXTBOX
-20
-12
-170
-30
+14
+10
+164
+28
 New player:
 11
 0.0
 1
 
 INPUTBOX
-15
-26
-136
-86
+9
+24
+130
+84
 Name
 NIL
 1
@@ -306,21 +313,21 @@ NIL
 String
 
 SWITCH
-15
-182
-136
-215
+9
+180
+130
+213
 C_after_DC
 C_after_DC
-1
+0
 1
 -1000
 
 SWITCH
-15
-214
-136
-247
+9
+212
+130
+245
 C_after_DD
 C_after_DD
 1
@@ -328,10 +335,10 @@ C_after_DD
 -1000
 
 BUTTON
+129
+24
+214
 135
-26
-220
-137
 NIL
 add-player
 NIL
@@ -345,10 +352,10 @@ NIL
 1
 
 BUTTON
-128
-438
-211
+122
 471
+205
+504
 new-players
 reset-new-players
 NIL
@@ -362,10 +369,10 @@ NIL
 1
 
 SLIDER
-16
-348
-154
-381
+9
+349
+147
+382
 benefit-to-other
 benefit-to-other
 0
@@ -377,30 +384,30 @@ NIL
 HORIZONTAL
 
 CHOOSER
-16
-272
-154
-317
+9
+273
+147
+318
 number-of-rounds
 number-of-rounds
 2 5 10 20 50 100 200 500 1000
-2
+8
 
 TEXTBOX
-16
-258
-166
-276
+9
+259
+159
+277
 Tournament:
 11
 0.0
 1
 
 SLIDER
-16
-316
-154
-349
+9
+317
+147
+350
 cost-to-self
 cost-to-self
 0
@@ -412,10 +419,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-153
-272
-210
-317
+146
+273
+203
+318
 players
 count turtles
 17
@@ -423,10 +430,10 @@ count turtles
 11
 
 MONITOR
-153
-316
-210
-361
+146
+317
+203
+362
 games
 count links
 17
@@ -434,10 +441,10 @@ count links
 11
 
 BUTTON
-153
-360
-210
-413
+146
+361
+203
+446
 NIL
 go
 T
@@ -451,10 +458,10 @@ NIL
 1
 
 BUTTON
-16
-438
-124
+10
 471
+118
+504
 same-players
 reset-same-players
 NIL
@@ -468,10 +475,10 @@ NIL
 1
 
 BUTTON
-135
-141
-220
-247
+129
+139
+214
+245
 random-player
 random-player
 NIL
@@ -485,25 +492,40 @@ NIL
 1
 
 TEXTBOX
-17
-424
-167
-442
+11
+457
+161
+475
 Restart:
 11
 0.0
 1
 
 SWITCH
-16
-380
-154
-413
+9
+381
+147
+414
 play-self
 play-self
 0
 1
 -1000
+
+SLIDER
+9
+413
+147
+446
+errors
+errors
+0
+50
+0
+1
+1
+%
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
