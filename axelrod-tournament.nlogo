@@ -247,9 +247,9 @@ to-report coop-to-letter [ coop ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-225
+249
 10
-697
+721
 503
 16
 16
@@ -286,7 +286,7 @@ New player:
 INPUTBOX
 9
 24
-130
+145
 84
 Name
 NIL
@@ -295,9 +295,9 @@ NIL
 String
 
 BUTTON
-129
+149
 24
-214
+234
 135
 NIL
 add-player
@@ -379,9 +379,9 @@ NIL
 HORIZONTAL
 
 MONITOR
-146
+151
 273
-203
+206
 318
 players
 count turtles
@@ -390,9 +390,9 @@ count turtles
 11
 
 MONITOR
-146
+151
 317
-203
+206
 362
 games
 count links
@@ -401,9 +401,9 @@ count links
 11
 
 BUTTON
-146
-361
-203
+151
+366
+206
 446
 NIL
 go
@@ -435,9 +435,9 @@ NIL
 1
 
 BUTTON
-129
+149
 139
-214
+234
 244
 random-player
 random-player
@@ -490,7 +490,7 @@ HORIZONTAL
 SLIDER
 9
 83
-130
+145
 116
 C_on_1st
 C_on_1st
@@ -505,7 +505,7 @@ HORIZONTAL
 SLIDER
 9
 115
-130
+145
 148
 C_after_CC
 C_after_CC
@@ -520,7 +520,7 @@ HORIZONTAL
 SLIDER
 9
 147
-130
+145
 180
 C_after_CD
 C_after_CD
@@ -535,7 +535,7 @@ HORIZONTAL
 SLIDER
 9
 179
-130
+145
 212
 C_after_DC
 C_after_DC
@@ -550,7 +550,7 @@ HORIZONTAL
 SLIDER
 9
 211
-130
+145
 244
 C_after_DD
 C_after_DD
