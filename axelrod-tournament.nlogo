@@ -28,11 +28,11 @@ end
 
 to random-player
 ; create a new player with randomly-chosen strategy
-  set C_on_1st   random 2 = 1
-  set C_after_CC random 2 = 1
-  set C_after_CD random 2 = 1
-  set C_after_DC random 2 = 1
-  set C_after_DD random 2 = 1
+  set C_on_1st   random 100
+  set C_after_CC random 100
+  set C_after_CD random 100
+  set C_after_DC random 100
+  set C_after_DD random 100
   add-player
 end
 
@@ -41,19 +41,19 @@ to add-player
 ; create a new player with strategy chosen by user
   create-turtles 1
   [ set my-name name
-    ; turn switches into numbers (0=defect, 1=cooperate)
-    set c-on-first ifelse-value C_on_1st   [1][0]
-    set c-after-cc ifelse-value C_after_CC [1][0]
-    set c-after-cd ifelse-value C_after_CD [1][0]
-    set c-after-dc ifelse-value C_after_DC [1][0]
-    set c-after-dd ifelse-value C_after_DD [1][0]
+    ; turn percents into numbers (0=defect, 1=cooperate)
+    set c-on-first C_on_1st / 100
+    set c-after-cc C_after_CC / 100
+    set c-after-cd C_after_CD / 100
+    set c-after-dc C_after_DC / 100
+    set c-after-dd C_after_DD / 100
     if my-name = "" ; if no name build name from strategy
     [ set my-name
-      ( word ifelse-value C_on_1st   ["C"]["D"]
-             ifelse-value C_after_CC ["C"]["D"]
-             ifelse-value C_after_CD ["C"]["D"]
-             ifelse-value C_after_DC ["C"]["D"]
-             ifelse-value C_after_DD ["C"]["D"]
+      ( word coop-to-letter c-on-first
+             coop-to-letter c-after-cc
+             coop-to-letter c-after-cd
+             coop-to-letter c-after-dc
+             coop-to-letter c-after-dd
       )
     ]
     setxy random-xcor random-ycor
@@ -152,8 +152,8 @@ to play
   ;print (word ([my-name] of player1) " vs. " ([my-name] of player2))
 
   ; first round
-  let player1-last chance-of-error [c-on-first] of player1
-  let player2-last chance-of-error [c-on-first] of player2
+  let player1-last choose [c-on-first] of player1
+  let player2-last choose [c-on-first] of player2
   update-stats player1 player1-last player2-last
   update-stats player2 player2-last player1-last
 
@@ -164,20 +164,20 @@ to play
   [ if-else player1-last > 0
     [ if-else player2-last > 0
       [ ; CC
-        set player1-next chance-of-error [c-after-cc] of player1
-        set player2-next chance-of-error [c-after-cc] of player2
+        set player1-next choose [c-after-cc] of player1
+        set player2-next choose [c-after-cc] of player2
       ][; CD
-        set player1-next chance-of-error [c-after-cd] of player1
-        set player2-next chance-of-error [c-after-dc] of player2
+        set player1-next choose [c-after-cd] of player1
+        set player2-next choose [c-after-dc] of player2
       ]
     ][
       if-else player2-last > 0
       [ ; DC
-        set player1-next chance-of-error [c-after-dc] of player1
-        set player2-next chance-of-error [c-after-cd] of player2
+        set player1-next choose [c-after-dc] of player1
+        set player2-next choose [c-after-cd] of player2
       ][; DD
-        set player1-next chance-of-error [c-after-dd] of player1
-        set player2-next chance-of-error [c-after-dd] of player2
+        set player1-next choose [c-after-dd] of player1
+        set player2-next choose [c-after-dd] of player2
       ]
     ]
     set player1-last player1-next
@@ -194,7 +194,7 @@ to play-against-self
 ; Note: player is playing against a mirror.  If they make an error, so does the mirror image.
   print my-name
   ; first round
-  let player1-last chance-of-error c-on-first
+  let player1-last choose c-on-first
   update-stats self player1-last player1-last
 
   ; remaining rounds
@@ -202,10 +202,10 @@ to play-against-self
   repeat number-of-rounds - 1
   [ if-else player1-last > 0
     [ ; CC
-      set player1-next chance-of-error c-after-cc
+      set player1-next choose c-after-cc
     ][
       ; DD
-      set player1-next chance-of-error c-after-dd
+      set player1-next choose c-after-dd
     ]
     set player1-last player1-next
     update-stats self player1-last player1-last
@@ -226,9 +226,24 @@ to update-stats [ player my-choice your-choice ]
 end
 
 
-to-report chance-of-error [ correct ]
-; checks for error.  Reports "correct" if no error, otherwise reports opposite.
-  report ifelse-value (random-float 100 < errors) [ 1 - correct ][ correct ]
+to-report choose [ coop ]
+; choose a strategy, either 1=cooperate or 0=defect, depending on mixed strategy, coop.
+; Includes chance of implementation error.
+  let intended ifelse-value (random-float 1 < coop) [1][0]
+  ; implementation error?
+  report ifelse-value (random-float 100 < errors) [ 1 - intended ][ intended ]
+end
+
+
+to-report coop-to-letter [ coop ]
+; returns a letter to indicate the degree of cooperation
+; D=0..20%, d=20-40%, ~=40-60%, c=60-80%, C=80..100%
+  if coop <  0.20 [ report "D"]
+  if coop <  0.40 [ report "d"]
+  if coop <  0.60 [ report "~"]
+  if coop <  0.80 [ report "c"]
+  ; else
+  report "C"
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -258,39 +273,6 @@ GRAPHICS-WINDOW
 ticks
 30.0
 
-SWITCH
-9
-84
-130
-117
-C_on_1st
-C_on_1st
-0
-1
--1000
-
-SWITCH
-9
-116
-130
-149
-C_after_CC
-C_after_CC
-0
-1
--1000
-
-SWITCH
-9
-148
-130
-181
-C_after_CD
-C_after_CD
-1
-1
--1000
-
 TEXTBOX
 14
 10
@@ -311,28 +293,6 @@ NIL
 1
 0
 String
-
-SWITCH
-9
-180
-130
-213
-C_after_DC
-C_after_DC
-0
-1
--1000
-
-SWITCH
-9
-212
-130
-245
-C_after_DD
-C_after_DD
-1
-1
--1000
 
 BUTTON
 129
@@ -478,7 +438,7 @@ BUTTON
 129
 139
 214
-245
+244
 random-player
 random-player
 NIL
@@ -521,7 +481,82 @@ errors
 errors
 0
 50
+2
+1
+1
+%
+HORIZONTAL
+
+SLIDER
+9
+83
+130
+116
+C_on_1st
+C_on_1st
 0
+100
+100
+1
+1
+%
+HORIZONTAL
+
+SLIDER
+9
+115
+130
+148
+C_after_CC
+C_after_CC
+0
+100
+100
+1
+1
+%
+HORIZONTAL
+
+SLIDER
+9
+147
+130
+180
+C_after_CD
+C_after_CD
+0
+100
+100
+1
+1
+%
+HORIZONTAL
+
+SLIDER
+9
+179
+130
+212
+C_after_DC
+C_after_DC
+0
+100
+100
+1
+1
+%
+HORIZONTAL
+
+SLIDER
+9
+211
+130
+244
+C_after_DD
+C_after_DD
+0
+100
+100
 1
 1
 %
