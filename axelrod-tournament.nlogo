@@ -115,8 +115,9 @@ to go
     print "Player\tCoop\tScore"
     stop
   ]
-  match-partners
-  ask links with [hidden? = false] [ play die ]
+  if not any? links with [hidden? = false] [match-partners]
+  ; just do one link per go loop so that web version updates graphics in-between
+  ask one-of links with [hidden? = false] [ play die ]
 end
 
 
