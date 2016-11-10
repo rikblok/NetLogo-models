@@ -14,6 +14,89 @@ turtles-own
   avg-score
 ]
 
+
+to presets
+  reset-same-players
+  add-2016w
+  add-common
+  ; zero-determinant strategies
+  add-extortionist
+  add-equalizer
+  add-generous
+end
+
+
+to add-2016w
+  ;            Name      1st  CC  CD  DC  DD
+  add-preset "*2016W*"   100 100  50  25  80
+  add-preset "Al"        100 100  50 100   0
+  add-preset "An1"       100 100   0   0   0
+  add-preset "An2"        97 100  10  60  30
+  add-preset "Br"        100 100  30 100  35
+  add-preset "Ca1"        28 100  45  45  78
+  add-preset "Ca2"       100 100   0   0 100
+  add-preset "Ca3"       100 100   0 100  30
+  add-preset "Ch1"       100 100   0 100  30
+  add-preset "Ch2"       100 100   0   0 100
+  add-preset "Da"        100 100   0   0 100
+  add-preset "Do"        100   0  50  50   0
+  add-preset "Ed"        100 100   0 100   0
+  add-preset "Em"        100 100   0 100   0
+  add-preset "Eu"        100 100   0   0   0
+  add-preset "Ev"        100 100   0   0 100
+  add-preset "Ha"        100 100   0   0   0
+  add-preset "He"        100 100  50   0 100
+  add-preset "Hu"        100 100   0 100   0
+  add-preset "Ja1"       100 100   0   0  80
+  add-preset "Ja2"       100 100   0   0   0
+  add-preset "Je"        100 100   0   0   0
+  add-preset "Ju"         50  65  35   0   0
+  add-preset "Ka"        100   0   0   0   0
+  add-preset "Ke1"        60  80   0   0  80
+  add-preset "Ke2"       100 100   0 100   0
+  add-preset "Le"        100 100   0 100  25
+  add-preset "Mi"        100 100   0   0   0
+  add-preset "Ne"        100 100   0 100   0
+  add-preset "Ra"        100 100   0 100   0
+  add-preset "Sa"        100 100   0   0   2
+  add-preset "Sh1"       100 100   0 100   0
+  add-preset "Sh2"       100 100   0   0  50
+  add-preset "Su"        100 100   0 100  20
+  add-preset "Ta1"       100 100   0   0  50
+  add-preset "Ta2"       100 100  15  75  30
+  add-preset "Ti"        100 100   0   0 100
+end
+
+
+to add-common
+; common strategies
+  add-preset "*AllD*"      0   0   0   0   0
+  add-preset "*AllC*"    100 100 100 100 100
+  add-preset "*TFT*"     100 100   0 100   0
+  add-preset "*Pavlov*"  100 100   0   0 100
+  add-preset "*Grim*"    100 100   0   0   0
+end
+
+
+to add-extortionist
+; requests 25% more than opponent
+  add-preset "*Extortionist*"  90 90  5 85  0
+end
+
+
+to add-equalizer
+; sets the opponents payoff to c, i.e. 1 in our case
+  add-preset "*Equalizer*"  75 75 50 50 25
+end
+
+
+to add-generous
+; ensures that difference to the social optimum R is 20% smaller for opponent
+; (tft is the limiting case, requesting that the differences to R are the same for both players)
+  add-preset "*Generous*" 100 100 15 95 10
+end
+
+
 to startup
   reset-new-players
 end
@@ -23,6 +106,25 @@ to reset-new-players
   clear-all
   set-default-shape turtles "circle"
   print date-and-time
+end
+
+
+to add-preset [ pre-name pre-c-on-first pre-c-after-cc pre-c-after-cd pre-c-after-dc pre-c-after-dd ]
+; create a new player with preset strategy
+  set name pre-name
+  set C_on_1st   pre-c-on-first
+  set C_after_CC pre-c-after-cc
+  set C_after_CD pre-c-after-cd
+  set C_after_DC pre-c-after-dc
+  set C_after_DD pre-c-after-dd
+  add-player
+  ; erase values
+  set name ""
+  set C_on_1st   random 100
+  set C_after_CC random 100
+  set C_after_CD random 100
+  set C_after_DC random 100
+  set C_after_DD random 100
 end
 
 
@@ -246,6 +348,20 @@ to-report coop-to-letter [ coop ]
   ; else
   report "C"
 end
+
+
+to remove-worst
+; removes lowest-scoring turtle
+  let worst-score min [ avg-score ] of turtles
+  ask one-of turtles with [ avg-score = worst-score ] [ die ]
+end
+
+
+to decimate
+; removes lowest-scoring 10% of turtles
+  let number-to-remove round ( ( count turtles ) / 10 )
+  repeat number-to-remove [ remove-worst ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 249
@@ -299,7 +415,7 @@ BUTTON
 149
 24
 234
-135
+57
 NIL
 add-player
 NIL
@@ -313,9 +429,9 @@ NIL
 1
 
 BUTTON
-122
+90
 471
-205
+162
 504
 new-players
 reset-new-players
@@ -351,7 +467,7 @@ CHOOSER
 318
 number-of-rounds
 number-of-rounds
-2 5 10 20 50 100 200 500 1000
+2 5 10 20 50 100 200 500 1000 2000 5000 10000
 8
 
 TEXTBOX
@@ -421,7 +537,7 @@ NIL
 BUTTON
 10
 471
-118
+86
 504
 same-players
 reset-same-players
@@ -436,10 +552,10 @@ NIL
 1
 
 BUTTON
-149
-139
+150
+62
 234
-244
+95
 random-player
 random-player
 NIL
@@ -562,6 +678,57 @@ C_after_DD
 1
 %
 HORIZONTAL
+
+BUTTON
+166
+471
+221
+504
+NIL
+presets
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+150
+100
+234
+133
+NIL
+remove-worst
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+150
+138
+234
+171
+NIL
+decimate
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
