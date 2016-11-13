@@ -17,6 +17,7 @@ turtles-own
   avg-coop
   avg-score
   ; evolution
+  my-generation
   fitness
   ancestor
 ]
@@ -389,24 +390,30 @@ to evolve
     ]
 
     ; define fitness
-    ask turtles [ set fitness (avg-score + min-score) ^ 2 ]
+    ask turtles
+    [ set my-generation generation
+      set fitness (avg-score + min-score) ^ 2
+    ]
 
     ; make next generation
     set generation generation + 1
-    let last-generation turtle-set turtles ; use turtle-set to make non-changing agent set
-    let last-sum sum [fitness] of last-generation
-    let last-count count last-generation
+    ; bug: NetLogo web has changing turtle-set [Rik, 2016-11-13]
+    ; let last-generation turtle-set turtles ; use turtle-set to make non-changing agent set
+    let last-sum sum [fitness] of turtles
+    let last-count count turtles
     repeat last-count
     [ ; roulette wheel sampling on fitness
-      ask one-of-weighted-by-fitness last-generation last-sum
+      ask one-of-weighted-by-fitness turtles with [my-generation < generation] last-sum
       [ hatch 1
-        set xcor xcor + random-float 0.01
-        set ycor ycor + random-float 0.01
-        if random 100 < errors [ mutate ] ; use errors as mutation rate (per individual)
+        [ set xcor xcor + random-float 0.01
+          set ycor ycor + random-float 0.01
+          set my-generation generation
+          if random 100 < errors [ mutate ] ; use errors as mutation rate (per individual)
+        ]
       ]
     ]
     ; remove last generation
-    ask last-generation
+    ask turtles with [ my-generation < generation ]
     [ let last-name my-name
       if not any? other turtles with [my-name = last-name]
       [ print
@@ -680,7 +687,7 @@ BUTTON
 100
 241
 133
-random-player
+NIL
 random-players
 NIL
 1
@@ -737,7 +744,7 @@ C_on_1st
 C_on_1st
 0
 100
-58
+24
 1
 1
 %
@@ -752,7 +759,7 @@ C_after_CC
 C_after_CC
 0
 100
-26
+7
 1
 1
 %
@@ -767,7 +774,7 @@ C_after_CD
 C_after_CD
 0
 100
-95
+12
 1
 1
 %
@@ -782,7 +789,7 @@ C_after_DC
 C_after_DC
 0
 100
-73
+41
 1
 1
 %
@@ -797,7 +804,7 @@ C_after_DD
 C_after_DD
 0
 100
-64
+84
 1
 1
 %
@@ -863,7 +870,7 @@ number
 number
 1
 50
-1
+20
 1
 1
 NIL
