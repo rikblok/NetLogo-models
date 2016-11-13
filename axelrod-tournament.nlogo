@@ -1,3 +1,7 @@
+globals
+[ generation ; count of generations, used by evolve
+]
+
 turtles-own
 [ my-name
   ; strategy
@@ -12,6 +16,9 @@ turtles-own
   total-score
   avg-coop
   avg-score
+  ; evolution
+  fitness
+  ancestor
 ]
 
 
@@ -28,7 +35,7 @@ end
 
 to add-2016w
   ;            Name      1st  CC  CD  DC  DD
-  add-preset "*2016W*"   100 100  50  25  80
+  add-preset "2016W"     100 100  50  25  80
   add-preset "Al"        100 100  50 100   0
   add-preset "An1"       100 100   0   0   0
   add-preset "An2"        97 100  10  60  30
@@ -70,30 +77,30 @@ end
 
 to add-common
 ; common strategies
-  add-preset "*AllD*"      0   0   0   0   0
-  add-preset "*AllC*"    100 100 100 100 100
-  add-preset "*TFT*"     100 100   0 100   0
-  add-preset "*Pavlov*"  100 100   0   0 100
-  add-preset "*Grim*"    100 100   0   0   0
+  add-preset "AllD"        0   0   0   0   0
+  add-preset "AllC"      100 100 100 100 100
+  add-preset "TFT"       100 100   0 100   0
+  add-preset "Pavlov"    100 100   0   0 100
+  add-preset "Grim"      100 100   0   0   0
 end
 
 
 to add-extortionist
 ; requests 25% more than opponent
-  add-preset "*Extortionist*"  90 90  5 85  0
+  add-preset "Extortionist"  90 90  5 85  0
 end
 
 
 to add-equalizer
 ; sets the opponents payoff to c, i.e. 1 in our case
-  add-preset "*Equalizer*"  75 75 50 50 25
+  add-preset "Equalizer"  75 75 50 50 25
 end
 
 
 to add-generous
 ; ensures that difference to the social optimum R is 20% smaller for opponent
 ; (tft is the limiting case, requesting that the differences to R are the same for both players)
-  add-preset "*Generous*" 100 100 15 95 10
+  add-preset "Generous" 100 100 15 95 10
 end
 
 
@@ -105,6 +112,7 @@ end
 to reset-new-players
   clear-all
   set-default-shape turtles "circle"
+  print ""
   print date-and-time
 end
 
@@ -128,14 +136,21 @@ to add-preset [ pre-name pre-c-on-first pre-c-after-cc pre-c-after-cd pre-c-afte
 end
 
 
-to random-player
-; create a new player with randomly-chosen strategy
-  set C_on_1st   random 100
-  set C_after_CC random 100
-  set C_after_CD random 100
-  set C_after_DC random 100
-  set C_after_DD random 100
-  add-player
+to add-players
+  repeat number [add-player]
+end
+
+
+to random-players
+; create new players with randomly-chosen strategy
+  repeat number
+  [ set C_on_1st   random 100
+    set C_after_CC random 100
+    set C_after_CD random 100
+    set C_after_DC random 100
+    set C_after_DD random 100
+    add-player
+  ]
 end
 
 
@@ -149,23 +164,14 @@ to add-player
     set c-after-cd C_after_CD / 100
     set c-after-dc C_after_DC / 100
     set c-after-dd C_after_DD / 100
-    if my-name = "" ; if no name build name from strategy
-    [ set my-name
-      ( word coop-to-letter c-on-first
-             coop-to-letter c-after-cc
-             coop-to-letter c-after-cd
-             coop-to-letter c-after-dc
-             coop-to-letter c-after-dd
-      )
-    ]
+    if my-name = "" [ generate-name ] ; if no name build name from strategy
     setxy random-xcor random-ycor
     set label-color yellow
     draw-node
-    while [xcor < -10] [ set xcor random-xcor ] ; shift to the right to make label visible
+    ;while [xcor < -10] [ set xcor random-xcor ] ; shift to the right to make label visible
     create-links-with other turtles [ hide-link ]
   ]
-  ; nudge turtles to fit new one in
-  repeat 50 [ layout-spring turtles links 0.2 17 1 ]
+  layout ; nudge turtles to fit new one in
   ask turtles [ set label-color white ]
 end
 
@@ -179,7 +185,7 @@ to draw-node
   ]
   ; size: -c => minimum, b => b + c + minimum
   set size avg-score + cost-to-self + 0.05
-  set label (word my-name " (" precision avg-score 2 ")  ")
+  set label ( word my-name " (" precision avg-score 2 ")  " )
 end
 
 
@@ -195,9 +201,8 @@ to reset-same-players
     set avg-score         0
     draw-node
   ]
-  ; space nodes out to make easier to see
-  repeat 50 [ layout-spring turtles links 0.2 17 1 ]
-  print date-and-time
+  layout ; space nodes out to make easier to see
+  ; print date-and-time
 end
 
 
@@ -210,11 +215,7 @@ to go
     if play-self
     [ ask turtles [ play-against-self ]
     ]
-    print "Player\tCoop\tScore"
-    foreach sort-on [avg-score] turtles
-    [ ask ? [ print (word my-name "\t" precision avg-coop 2 "\t" precision avg-score 2) ]
-    ]
-    print "Player\tCoop\tScore"
+    print-score
     stop
   ]
   if not any? links with [hidden? = false] [match-partners]
@@ -248,7 +249,7 @@ end
 to play
 ; play two players against each other
   let players both-ends
-  print [my-name] of players
+  ; print [my-name] of players
   let player1 one-of players ; one end of the link
   let player2 nobody ; pre-define variable player2
   ask player1 [ set player2 one-of other players ] ; the other end of the link
@@ -295,7 +296,7 @@ to play-against-self
 ; play strategy against itself.
 ; The user can choose whether to allow this.
 ; Note: player is playing against a mirror.  If they make an error, so does the mirror image.
-  print my-name
+  ; print my-name
   ; first round
   let player1-last choose c-on-first
   update-stats self player1-last player1-last
@@ -357,10 +358,133 @@ to remove-worst
 end
 
 
-to decimate
-; removes lowest-scoring 10% of turtles
-  let number-to-remove round ( ( count turtles ) / 10 )
-  repeat number-to-remove [ remove-worst ]
+to remove-name
+; removes turtle(s) matching user-specified name
+  if name != ""
+  [ ask turtles with [ my-name = name ] [ die ]
+  ]
+end
+
+
+to evolve
+  if not any? turtles [stop]
+  if not any? links [ reset-same-players ]
+  go
+  if not any? links
+  [ ; check if any variation in scores
+    let max-score max [avg-score] of turtles
+    let mean-score mean [avg-score] of turtles
+    let min-score min [avg-score] of turtles
+    print
+    ( word "Generation " generation ": min, mean, max score = "
+      precision min-score 2  ", "
+      precision mean-score 2 ", "
+      precision max-score 2 " ("
+      [my-name] of one-of turtles with [ avg-score = max-score] ")"
+    )
+    if max-score = min-score
+    [ ; no selection possible, stop
+      print "No variation in score.  Evolve stopping..."
+      stop
+    ]
+
+    ; define fitness
+    ask turtles [ set fitness (avg-score + min-score) ^ 2 ]
+
+    ; make next generation
+    set generation generation + 1
+    let last-generation turtle-set turtles ; use turtle-set to make non-changing agent set
+    let last-sum sum [fitness] of last-generation
+    let last-count count last-generation
+    repeat last-count
+    [ ; roulette wheel sampling on fitness
+      ask one-of-weighted-by-fitness last-generation last-sum
+      [ hatch 1
+        set xcor xcor + random-float 0.01
+        set ycor ycor + random-float 0.01
+        if random 100 < errors [ mutate ] ; use errors as mutation rate (per individual)
+      ]
+    ]
+    ; remove last generation
+    ask last-generation
+    [ let last-name my-name
+      if not any? other turtles with [my-name = last-name]
+      [ print
+        ( word last-name
+          " eliminated (score = "
+          precision avg-score 2
+          ")."
+        )
+      ]
+      die
+    ]
+  ]
+end
+
+
+to print-score
+  print "Player\tCoop\tScore"
+  foreach sort-on [avg-score] turtles
+  [ ask ? [ print (word my-name "\t" precision avg-coop 2 "\t" precision avg-score 2) ]
+  ]
+  print "Player\tCoop\tScore"
+end
+
+
+to-report one-of-weighted-by-fitness [ agents sum-fitness ]
+; uses fitness to choose one of agents.  Used to reproduce next generation
+  let rand-fitness random-float sum-fitness
+  let result nobody
+  ask agents
+  [ set rand-fitness rand-fitness - fitness
+    if result = nobody and rand-fitness <= 0 [ set result self ]
+  ]
+  report result
+end
+
+
+to layout
+; layout positions of turtles
+  ; create a temporary turtle to pull other turtles towards center
+  let center-turtle nobody
+  create-turtles 1
+  [ set hidden? false
+    set center-turtle self
+    create-links-with other turtles [ set hidden? false ]
+  ]
+  repeat 50
+  [ ask center-turtle [ setxy 0 0 ]
+    layout-spring turtles links 2 17 10
+  ]
+  ask center-turtle [ die ]
+end
+
+
+to mutate
+  if ancestor = 0 [set ancestor my-name]
+  let which random 5 ; pick one of the 5 strategies to mutate
+  if  which = 0 [ set c-on-first random-float 1 ]
+  if  which = 1 [ set c-after-cc random-float 1 ]
+  if  which = 2 [ set c-after-cd random-float 1 ]
+  if  which = 3 [ set c-after-dc random-float 1 ]
+  if  which = 4 [ set c-after-dd random-float 1 ]
+  generate-name
+end
+
+
+to generate-name
+  set my-name
+  ( word coop-to-letter c-on-first
+    coop-to-letter c-after-cc
+    coop-to-letter c-after-cd
+    coop-to-letter c-after-dc
+    coop-to-letter c-after-dd
+  )
+end
+
+
+to-report full-name
+  report word my-name ifelse-value (ancestor = 0) [""][word " " ancestor]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -395,7 +519,7 @@ TEXTBOX
 10
 164
 28
-New player:
+New players:
 11
 0.0
 1
@@ -413,11 +537,11 @@ String
 
 BUTTON
 149
-24
-234
-57
+62
+241
+95
 NIL
-add-player
+add-players
 NIL
 1
 T
@@ -498,7 +622,7 @@ HORIZONTAL
 MONITOR
 151
 273
-206
+221
 318
 players
 count turtles
@@ -509,7 +633,7 @@ count turtles
 MONITOR
 151
 317
-206
+221
 362
 games
 count links
@@ -520,8 +644,8 @@ count links
 BUTTON
 151
 366
-206
-446
+221
+399
 NIL
 go
 T
@@ -553,11 +677,11 @@ NIL
 
 BUTTON
 150
-62
-234
-95
+100
+241
+133
 random-player
-random-player
+random-players
 NIL
 1
 T
@@ -613,7 +737,7 @@ C_on_1st
 C_on_1st
 0
 100
-100
+58
 1
 1
 %
@@ -628,7 +752,7 @@ C_after_CC
 C_after_CC
 0
 100
-100
+26
 1
 1
 %
@@ -643,7 +767,7 @@ C_after_CD
 C_after_CD
 0
 100
-100
+95
 1
 1
 %
@@ -658,7 +782,7 @@ C_after_DC
 C_after_DC
 0
 100
-100
+73
 1
 1
 %
@@ -673,7 +797,7 @@ C_after_DD
 C_after_DD
 0
 100
-100
+64
 1
 1
 %
@@ -698,9 +822,9 @@ NIL
 
 BUTTON
 150
-100
-234
-133
+138
+241
+171
 NIL
 remove-worst
 NIL
@@ -714,12 +838,44 @@ NIL
 1
 
 BUTTON
-150
-138
-234
-171
+151
+403
+221
+436
 NIL
-decimate
+evolve
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+149
+24
+241
+57
+number
+number
+1
+50
+1
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+150
+176
+241
+209
+NIL
+remove-name
 NIL
 1
 T
@@ -733,11 +889,15 @@ NIL
 @#$#@#$#@
 ## WHAT IS IT?
 
+* problem of cooperation
+
+In 1980 Robert Axelrod conducted a round robin tournament to see what strategies would succeed in a mixed population.
+
 (a general understanding of what the model is trying to show or explain)
 
   * Axelrod's tournament with restrictions
   * fixed number of rounds
-  * only pure, memory-one strategies
+  * only memory-one strategies
 
 ## HOW IT WORKS
 
