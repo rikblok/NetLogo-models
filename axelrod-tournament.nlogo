@@ -49,7 +49,8 @@ end
 ;-------------------------------------------------------------------------------
 to reset-new-players
   ; clear all except output
-  clear-globals clear-ticks clear-turtles clear-patches clear-drawing ; clear-all
+  set generation 0 ; NetLogo web: unimplemented primitive: clear-globals
+  clear-ticks clear-turtles clear-patches clear-drawing ; clear-all
   set-default-shape turtles "circle"
   output-print ""
   output-print date-and-time
