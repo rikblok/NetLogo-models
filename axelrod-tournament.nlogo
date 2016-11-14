@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ;==================== begin axelrod-tournament.nlogo ========================
 ; axelrod-tournament - This NetLogo model allows you to try Axelrod's
 ; tournaments yourself by creating some strategies and testing them in an
@@ -20,6 +21,12 @@ globals
 [ generation ; count of generations, used by evolve
 ]
 ;-------------------------------------------------------------------------------
+=======
+globals
+[ generation ; count of generations, used by evolve
+]
+
+>>>>>>> origin/master
 turtles-own
 [ my-name
   ; strategy
@@ -116,28 +123,56 @@ to add-common
   add-preset "TFT"       100 100   0 100   0
   add-preset "Pavlov"    100 100   0   0 100
   add-preset "Grim"      100 100   0   0   0
+<<<<<<< HEAD
   output-print "Common strategies (AllD, AllC, TFT, Pavlov, & Grim) added."
+=======
+>>>>>>> origin/master
 end
 ;-------------------------------------------------------------------------------
 to add-extortionist
 ; requests 25% more than opponent
   add-preset "Extortionist"  90 90  5 85  0
+<<<<<<< HEAD
   output-print "Zero-determinant strategy 'Extortionist' added."
+=======
+>>>>>>> origin/master
 end
 ;-------------------------------------------------------------------------------
 to add-equalizer
 ; sets the opponents payoff to c, i.e. 1 in our case
   add-preset "Equalizer"  75 75 50 50 25
+<<<<<<< HEAD
   output-print "Zero-determinant strategy 'Equalizer' added."
+=======
+>>>>>>> origin/master
 end
 ;-------------------------------------------------------------------------------
 to add-generous
 ; ensures that difference to the social optimum R is 20% smaller for opponent
 ; (tft is the limiting case, requesting that the differences to R are the same for both players)
   add-preset "Generous" 100 100 15 95 10
+<<<<<<< HEAD
   output-print "Zero-determinant strategy 'Generous' added."
 end
 ;-------------------------------------------------------------------------------
+=======
+end
+
+
+to startup
+  reset-new-players
+end
+
+
+to reset-new-players
+  clear-all
+  set-default-shape turtles "circle"
+  print ""
+  print date-and-time
+end
+
+
+>>>>>>> origin/master
 to add-preset [ pre-name pre-c-on-first pre-c-after-cc pre-c-after-cd pre-c-after-dc pre-c-after-dd ]
 ; create a new player with preset strategy
   set name pre-name
@@ -155,10 +190,30 @@ to add-preset [ pre-name pre-c-on-first pre-c-after-cc pre-c-after-cd pre-c-afte
   set C_after_DC random 100
   set C_after_DD random 100
 end
+<<<<<<< HEAD
 ;-------------------------------------------------------------------------------
 to add-players
   repeat how-many [add-player]
   output-print (word how-many " strategies added.")
+=======
+
+
+to add-players
+  repeat number [add-player]
+end
+
+
+to random-players
+; create new players with randomly-chosen strategy
+  repeat number
+  [ set C_on_1st   random 100
+    set C_after_CC random 100
+    set C_after_CD random 100
+    set C_after_DC random 100
+    set C_after_DD random 100
+    add-player
+  ]
+>>>>>>> origin/master
 end
 ;-------------------------------------------------------------------------------
 to random-players
@@ -220,7 +275,11 @@ to reset-same-players
     draw-node
   ]
   layout ; space nodes out to make easier to see
+<<<<<<< HEAD
   output-print "Strategies reset."
+=======
+  ; print date-and-time
+>>>>>>> origin/master
 end
 ;-------------------------------------------------------------------------------
 to go
@@ -232,7 +291,11 @@ to go
     if play-self
     [ ask turtles [ play-against-self ]
     ]
+<<<<<<< HEAD
     output-print-score
+=======
+    print-score
+>>>>>>> origin/master
     stop
   ]
   if not any? links with [hidden? = false] [match-partners]
@@ -263,7 +326,11 @@ end
 to play
 ; play two players against each other
   let players both-ends
+<<<<<<< HEAD
   ; output-print [my-name] of players
+=======
+  ; print [my-name] of players
+>>>>>>> origin/master
   let player1 one-of players ; one end of the link
   let player2 nobody ; pre-define variable player2
   ask player1 [ set player2 one-of other players ] ; the other end of the link
@@ -309,7 +376,11 @@ to play-against-self
 ; play strategy against itself.
 ; The user can choose whether to allow this.
 ; Note: player is playing against a mirror.  If they make an error, so does the mirror image.
+<<<<<<< HEAD
   ; output-print my-name
+=======
+  ; print my-name
+>>>>>>> origin/master
   ; first round
   let player1-last choose c-on-first
   update-stats self player1-last player1-last
@@ -411,6 +482,45 @@ to evolve
       set fitness (avg-score + min-score)
     ]
 
+<<<<<<< HEAD
+=======
+to remove-name
+; removes turtle(s) matching user-specified name
+  if name != ""
+  [ ask turtles with [ my-name = name ] [ die ]
+  ]
+end
+
+
+to evolve
+  if not any? turtles [stop]
+  if not any? links [ reset-same-players ]
+  go
+  if not any? links
+  [ ; check if any variation in scores
+    let max-score max [avg-score] of turtles
+    let mean-score mean [avg-score] of turtles
+    let min-score min [avg-score] of turtles
+    print
+    ( word "Generation " generation ": min, mean, max score = "
+      precision min-score 2  ", "
+      precision mean-score 2 ", "
+      precision max-score 2 " ("
+      [my-name] of one-of turtles with [ avg-score = max-score] ")"
+    )
+    if max-score = min-score
+    [ ; no selection possible, stop
+      print "No variation in score.  Evolve stopping..."
+      stop
+    ]
+
+    ; define fitness
+    ask turtles
+    [ set my-generation generation
+      set fitness (avg-score + min-score) ^ 2
+    ]
+
+>>>>>>> origin/master
     ; make next generation
     set generation generation + 1
     ; bug: NetLogo web has changing turtle-set [Rik, 2016-11-13]
@@ -432,7 +542,11 @@ to evolve
     ask turtles with [ my-generation < generation ]
     [ let last-name my-name
       if not any? other turtles with [my-name = last-name]
+<<<<<<< HEAD
       [ output-print
+=======
+      [ print
+>>>>>>> origin/master
         ( word last-name
           " eliminated (score = "
           precision avg-score 2
@@ -443,6 +557,7 @@ to evolve
     ]
   ]
 end
+<<<<<<< HEAD
 ;-------------------------------------------------------------------------------
 to output-print-score
   output-print "Player\tCoop\tScore"
@@ -452,6 +567,19 @@ to output-print-score
   output-print "Player\tCoop\tScore"
 end
 ;-------------------------------------------------------------------------------
+=======
+
+
+to print-score
+  print "Player\tCoop\tScore"
+  foreach sort-on [avg-score] turtles
+  [ ask ? [ print (word my-name "\t" precision avg-coop 2 "\t" precision avg-score 2) ]
+  ]
+  print "Player\tCoop\tScore"
+end
+
+
+>>>>>>> origin/master
 to-report one-of-weighted-by-fitness [ agents sum-fitness ]
 ; uses fitness to choose one of agents.  Used to reproduce next generation
   let rand-fitness random-float sum-fitness
@@ -462,12 +590,18 @@ to-report one-of-weighted-by-fitness [ agents sum-fitness ]
   ]
   report result
 end
+<<<<<<< HEAD
 ;-------------------------------------------------------------------------------
+=======
+
+
+>>>>>>> origin/master
 to layout
 ; layout positions of turtles
   ; create a temporary turtle to pull other turtles towards center
   let center-turtle nobody
   create-turtles 1
+<<<<<<< HEAD
   [ set hidden? true
     set center-turtle self
     create-links-with other turtles [ set hidden? true ]
@@ -479,6 +613,20 @@ to layout
   ask center-turtle [ die ]
 end
 ;-------------------------------------------------------------------------------
+=======
+  [ set hidden? false
+    set center-turtle self
+    create-links-with other turtles [ set hidden? false ]
+  ]
+  repeat 50
+  [ ask center-turtle [ setxy 0 0 ]
+    layout-spring turtles links 2 17 10
+  ]
+  ask center-turtle [ die ]
+end
+
+
+>>>>>>> origin/master
 to mutate
   if ancestor = 0 [set ancestor my-name]
   let which random 5 ; pick one of the 5 strategies to mutate
@@ -489,7 +637,12 @@ to mutate
   if  which = 4 [ set c-after-dd random-float 1 ]
   generate-name
 end
+<<<<<<< HEAD
 ;-------------------------------------------------------------------------------
+=======
+
+
+>>>>>>> origin/master
 to generate-name
   set my-name
   ( word coop-to-letter c-on-first
@@ -499,7 +652,12 @@ to generate-name
     coop-to-letter c-after-dd
   )
 end
+<<<<<<< HEAD
 ;-------------------------------------------------------------------------------
+=======
+
+
+>>>>>>> origin/master
 to-report full-name
   report word my-name ifelse-value (ancestor = 0) [""][word " " ancestor]
 end
@@ -568,7 +726,11 @@ TEXTBOX
 10
 164
 28
+<<<<<<< HEAD
 Players:
+=======
+New players:
+>>>>>>> origin/master
 11
 0.0
 1
@@ -786,7 +948,11 @@ C_on_1st
 C_on_1st
 0
 100
+<<<<<<< HEAD
 17
+=======
+24
+>>>>>>> origin/master
 1
 1
 %
@@ -801,7 +967,11 @@ C_after_CC
 C_after_CC
 0
 100
+<<<<<<< HEAD
 67
+=======
+7
+>>>>>>> origin/master
 1
 1
 %
@@ -816,7 +986,11 @@ C_after_CD
 C_after_CD
 0
 100
+<<<<<<< HEAD
 2
+=======
+12
+>>>>>>> origin/master
 1
 1
 %
@@ -831,7 +1005,11 @@ C_after_DC
 C_after_DC
 0
 100
+<<<<<<< HEAD
 81
+=======
+41
+>>>>>>> origin/master
 1
 1
 %
@@ -846,7 +1024,11 @@ C_after_DD
 C_after_DD
 0
 100
+<<<<<<< HEAD
 2
+=======
+84
+>>>>>>> origin/master
 1
 1
 %
@@ -908,11 +1090,19 @@ SLIDER
 24
 241
 57
+<<<<<<< HEAD
 how-many
 how-many
 1
 50
 1
+=======
+number
+number
+1
+50
+20
+>>>>>>> origin/master
 1
 1
 NIL
@@ -923,6 +1113,7 @@ BUTTON
 176
 241
 209
+<<<<<<< HEAD
 NIL
 remove-name
 NIL
@@ -931,6 +1122,10 @@ T
 OBSERVER
 NIL
 NIL
+=======
+NIL
+remove-name
+>>>>>>> origin/master
 NIL
 NIL
 1
@@ -964,9 +1159,21 @@ NIL
 
 A [NetLogo] model by Rik Blok.
 
+<<<<<<< HEAD
 [http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:axelrod_s_tournament:start](http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:axelrod_s_tournament:start)
 
 How can cooperation arise and persist when there is a temptation to "defect" from cooperation for personal gain?  [Cooperation](https://en.wikipedia.org/wiki/Cooperation) is a well-studied problem in economics, social sciences, and evolution.
+=======
+* problem of cooperation
+
+In 1980 Robert Axelrod conducted a round robin tournament to see what strategies would succeed in a mixed population.
+
+(a general understanding of what the model is trying to show or explain)
+
+  * Axelrod's tournament with restrictions
+  * fixed number of rounds
+  * only memory-one strategies
+>>>>>>> origin/master
 
 Let's construct a simple scenario to highlight the problem.  Consider an interaction between two individuals where each player can, at a cost _c>0_ to themselves, confer a benefit _b>c_ to the other player:
 
