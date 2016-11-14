@@ -1,3 +1,25 @@
+;==================== begin axelrod-tournament.nlogo ========================
+; axelrod-tournament - This NetLogo model allows you to try Axelrod's
+; tournaments yourself by creating some strategies and testing them in an
+; iterated Prisoner's Dilemma.
+;
+; By Rik Blok, 2016 <http://www.zoology.ubc.ca/~rikblok/wiki/doku.php>
+;
+; This is free and unencumbered software released into the public domain.
+;
+; Anyone is free to copy, modify, publish, use, compile, sell, or
+; distribute this software, either in source code form or as a compiled
+; binary, for any purpose, commercial or non-commercial, and by any
+; means.
+;
+; Revisions:
+;
+;   2016-11-14 - initial release by Rik Blok
+;-------------------------------------------------------------------------------
+globals
+[ generation ; count of generations, used by evolve
+]
+;-------------------------------------------------------------------------------
 turtles-own
 [ my-name
   ; strategy
@@ -12,9 +34,28 @@ turtles-own
   total-score
   avg-coop
   avg-score
+  ; evolution
+  my-generation
+  fitness
+  ancestor
 ]
-
-
+;-------------------------------------------------------------------------------
+to startup
+  output-print "This NetLogo model allows you to try Axelrod's"
+  output-print "tournaments yourself by creating some strategies and"
+  output-print "testing them in an iterated Prisoner's Dilemma."
+  reset-new-players
+end
+;-------------------------------------------------------------------------------
+to reset-new-players
+  ; clear all except output
+  clear-globals clear-ticks clear-turtles clear-patches clear-drawing ; clear-all
+  set-default-shape turtles "circle"
+  output-print ""
+  output-print date-and-time
+  output-print "Tournament reset.  Now add some players with\n[add-players], [random-players], or [preset]."
+end
+;-------------------------------------------------------------------------------
 to presets
   reset-same-players
   add-2016w
@@ -23,12 +64,12 @@ to presets
   add-extortionist
   add-equalizer
   add-generous
+  output-print "Preset players added."
 end
-
-
+;-------------------------------------------------------------------------------
 to add-2016w
   ;            Name      1st  CC  CD  DC  DD
-  add-preset "*2016W*"   100 100  50  25  80
+  add-preset "2016W"     100 100  50  25  80
   add-preset "Al"        100 100  50 100   0
   add-preset "An1"       100 100   0   0   0
   add-preset "An2"        97 100  10  60  30
@@ -65,50 +106,38 @@ to add-2016w
   add-preset "Ta1"       100 100   0   0  50
   add-preset "Ta2"       100 100  15  75  30
   add-preset "Ti"        100 100   0   0 100
+  output-print "Strategies from UBC ISCI 344 2016W class added."
 end
-
-
+;-------------------------------------------------------------------------------
 to add-common
 ; common strategies
-  add-preset "*AllD*"      0   0   0   0   0
-  add-preset "*AllC*"    100 100 100 100 100
-  add-preset "*TFT*"     100 100   0 100   0
-  add-preset "*Pavlov*"  100 100   0   0 100
-  add-preset "*Grim*"    100 100   0   0   0
+  add-preset "AllD"        0   0   0   0   0
+  add-preset "AllC"      100 100 100 100 100
+  add-preset "TFT"       100 100   0 100   0
+  add-preset "Pavlov"    100 100   0   0 100
+  add-preset "Grim"      100 100   0   0   0
+  output-print "Common strategies (AllD, AllC, TFT, Pavlov, & Grim) added."
 end
-
-
+;-------------------------------------------------------------------------------
 to add-extortionist
 ; requests 25% more than opponent
-  add-preset "*Extortionist*"  90 90  5 85  0
+  add-preset "Extortionist"  90 90  5 85  0
+  output-print "Zero-determinant strategy 'Extortionist' added."
 end
-
-
+;-------------------------------------------------------------------------------
 to add-equalizer
 ; sets the opponents payoff to c, i.e. 1 in our case
-  add-preset "*Equalizer*"  75 75 50 50 25
+  add-preset "Equalizer"  75 75 50 50 25
+  output-print "Zero-determinant strategy 'Equalizer' added."
 end
-
-
+;-------------------------------------------------------------------------------
 to add-generous
 ; ensures that difference to the social optimum R is 20% smaller for opponent
 ; (tft is the limiting case, requesting that the differences to R are the same for both players)
-  add-preset "*Generous*" 100 100 15 95 10
+  add-preset "Generous" 100 100 15 95 10
+  output-print "Zero-determinant strategy 'Generous' added."
 end
-
-
-to startup
-  reset-new-players
-end
-
-
-to reset-new-players
-  clear-all
-  set-default-shape turtles "circle"
-  print date-and-time
-end
-
-
+;-------------------------------------------------------------------------------
 to add-preset [ pre-name pre-c-on-first pre-c-after-cc pre-c-after-cd pre-c-after-dc pre-c-after-dd ]
 ; create a new player with preset strategy
   set name pre-name
@@ -126,19 +155,25 @@ to add-preset [ pre-name pre-c-on-first pre-c-after-cc pre-c-after-cd pre-c-afte
   set C_after_DC random 100
   set C_after_DD random 100
 end
-
-
-to random-player
-; create a new player with randomly-chosen strategy
-  set C_on_1st   random 100
-  set C_after_CC random 100
-  set C_after_CD random 100
-  set C_after_DC random 100
-  set C_after_DD random 100
-  add-player
+;-------------------------------------------------------------------------------
+to add-players
+  repeat how-many [add-player]
+  output-print (word how-many " strategies added.")
 end
-
-
+;-------------------------------------------------------------------------------
+to random-players
+; create new players with randomly-chosen strategy
+  repeat how-many
+  [ set C_on_1st   random 100
+    set C_after_CC random 100
+    set C_after_CD random 100
+    set C_after_DC random 100
+    set C_after_DD random 100
+    add-player
+  ]
+  output-print (word how-many " random strategies added.")
+end
+;-------------------------------------------------------------------------------
 to add-player
 ; create a new player with strategy chosen by user
   create-turtles 1
@@ -149,27 +184,17 @@ to add-player
     set c-after-cd C_after_CD / 100
     set c-after-dc C_after_DC / 100
     set c-after-dd C_after_DD / 100
-    if my-name = "" ; if no name build name from strategy
-    [ set my-name
-      ( word coop-to-letter c-on-first
-             coop-to-letter c-after-cc
-             coop-to-letter c-after-cd
-             coop-to-letter c-after-dc
-             coop-to-letter c-after-dd
-      )
-    ]
+    if my-name = "" [ generate-name ] ; if no name build name from strategy
     setxy random-xcor random-ycor
     set label-color yellow
     draw-node
-    while [xcor < -10] [ set xcor random-xcor ] ; shift to the right to make label visible
+    ;while [xcor < -10] [ set xcor random-xcor ] ; shift to the right to make label visible
     create-links-with other turtles [ hide-link ]
   ]
-  ; nudge turtles to fit new one in
-  repeat 50 [ layout-spring turtles links 0.2 17 1 ]
+  layout ; nudge turtles to fit new one in
   ask turtles [ set label-color white ]
 end
-
-
+;-------------------------------------------------------------------------------
 to draw-node
 ; update node: size indicates score and color indicates level of cooperation
   if-else rounds-played > 0
@@ -179,10 +204,9 @@ to draw-node
   ]
   ; size: -c => minimum, b => b + c + minimum
   set size avg-score + cost-to-self + 0.05
-  set label (word my-name " (" precision avg-score 2 ")  ")
+  set label ( word my-name " (" precision avg-score 2 ")  " )
 end
-
-
+;-------------------------------------------------------------------------------
 to reset-same-players
 ; reset tournament but keep same players
   ask links [ die ]
@@ -195,12 +219,10 @@ to reset-same-players
     set avg-score         0
     draw-node
   ]
-  ; space nodes out to make easier to see
-  repeat 50 [ layout-spring turtles links 0.2 17 1 ]
-  print date-and-time
+  layout ; space nodes out to make easier to see
+  output-print "Strategies reset."
 end
-
-
+;-------------------------------------------------------------------------------
 to go
 ; the main loop.  Play pairs of strategies against each other.
 ; This loop is repeated for all possible pairs.
@@ -210,19 +232,14 @@ to go
     if play-self
     [ ask turtles [ play-against-self ]
     ]
-    print "Player\tCoop\tScore"
-    foreach sort-on [avg-score] turtles
-    [ ask ? [ print (word my-name "\t" precision avg-coop 2 "\t" precision avg-score 2) ]
-    ]
-    print "Player\tCoop\tScore"
+    output-print-score
     stop
   ]
   if not any? links with [hidden? = false] [match-partners]
   ; just do one link per go loop so that web version updates graphics in-between
   ask one-of links with [hidden? = false] [ play die ]
 end
-
-
+;-------------------------------------------------------------------------------
 to match-partners
 ; try to find a partner for every player
   ask turtles
@@ -237,22 +254,20 @@ to match-partners
     ]
   ]
 end
-
-
+;-------------------------------------------------------------------------------
 to-report not-partnered-yet?
 ; reports whether player has found a partner yet
   report all? my-links [hidden? = true ]
 end
-
-
+;-------------------------------------------------------------------------------
 to play
 ; play two players against each other
   let players both-ends
-  print [my-name] of players
+  ; output-print [my-name] of players
   let player1 one-of players ; one end of the link
   let player2 nobody ; pre-define variable player2
   ask player1 [ set player2 one-of other players ] ; the other end of the link
-  ;print (word ([my-name] of player1) " vs. " ([my-name] of player2))
+  ;output-print (word ([my-name] of player1) " vs. " ([my-name] of player2))
 
   ; first round
   let player1-last choose [c-on-first] of player1
@@ -289,13 +304,12 @@ to play
     update-stats player2 player2-last player1-last
   ]
 end
-
-
+;-------------------------------------------------------------------------------
 to play-against-self
 ; play strategy against itself.
 ; The user can choose whether to allow this.
 ; Note: player is playing against a mirror.  If they make an error, so does the mirror image.
-  print my-name
+  ; output-print my-name
   ; first round
   let player1-last choose c-on-first
   update-stats self player1-last player1-last
@@ -314,8 +328,7 @@ to play-against-self
     update-stats self player1-last player1-last
   ]
 end
-
-
+;-------------------------------------------------------------------------------
 to update-stats [ player my-choice your-choice ]
 ; given latest round of play, update a player's statistics
   ask player
@@ -327,8 +340,7 @@ to update-stats [ player my-choice your-choice ]
     draw-node
   ]
 end
-
-
+;-------------------------------------------------------------------------------
 to-report choose [ coop ]
 ; choose a strategy, either 1=cooperate or 0=defect, depending on mixed strategy, coop.
 ; Includes chance of implementation error.
@@ -336,8 +348,7 @@ to-report choose [ coop ]
   ; implementation error?
   report ifelse-value (random-float 100 < errors) [ 1 - intended ][ intended ]
 end
-
-
+;-------------------------------------------------------------------------------
 to-report coop-to-letter [ coop ]
 ; returns a letter to indicate the degree of cooperation
 ; D=0..20%, d=20-40%, ~=40-60%, c=60-80%, C=80..100%
@@ -348,31 +359,193 @@ to-report coop-to-letter [ coop ]
   ; else
   report "C"
 end
-
-
+;-------------------------------------------------------------------------------
 to remove-worst
 ; removes lowest-scoring turtle
   let worst-score min [ avg-score ] of turtles
-  ask one-of turtles with [ avg-score = worst-score ] [ die ]
+  ask one-of turtles with [ avg-score = worst-score ]
+  [ output-print (word "Strategy with lowest avg-score (" precision avg-score 2 ") removed.")
+    die
+  ]
 end
-
-
-to decimate
-; removes lowest-scoring 10% of turtles
-  let number-to-remove round ( ( count turtles ) / 10 )
-  repeat number-to-remove [ remove-worst ]
+;-------------------------------------------------------------------------------
+to remove-name
+; removes turtle(s) matching user-specified name
+  if-else name = ""
+  [ output-print "Enter a name and click [remove-name] to remove that strategy."
+  ] ; else
+  [ let count-to-die count turtles with [ my-name = name ]
+    ask turtles with [ my-name = name ] [ die ]
+    output-print (word count-to-die " copies of strategy '" name "' removed.")
+  ]
 end
+;-------------------------------------------------------------------------------
+to evolve
+  if not any? turtles
+  [ output-print "Add some players before clicking [evolve]."
+    stop
+  ]
+  if not any? links [ reset-same-players ]
+  go
+  if not any? links
+  [ ; check if any variation in scores
+    let max-score max [avg-score] of turtles
+    let mean-score mean [avg-score] of turtles
+    let min-score min [avg-score] of turtles
+    output-print
+    ( word "Generation " generation ": min, mean, max score = "
+      precision min-score 2  ", "
+      precision mean-score 2 ", "
+      precision max-score 2 " ("
+      [my-name] of one-of turtles with [ avg-score = max-score] ")"
+    )
+    if max-score = min-score
+    [ ; no selection possible, stop
+      output-print "No variation in score.  Evolve stopping..."
+      stop
+    ]
+
+    ; define fitness
+    ask turtles
+    [ set my-generation generation
+      set fitness (avg-score + min-score)
+    ]
+
+    ; make next generation
+    set generation generation + 1
+    ; bug: NetLogo web has changing turtle-set [Rik, 2016-11-13]
+    ; let last-generation turtle-set turtles ; use turtle-set to make non-changing agent set
+    let last-sum sum [fitness] of turtles
+    let last-count count turtles
+    repeat last-count
+    [ ; roulette wheel sampling on fitness
+      ask one-of-weighted-by-fitness turtles with [my-generation < generation] last-sum
+      [ hatch 1
+        [ set xcor xcor + random-float 0.01
+          set ycor ycor + random-float 0.01
+          set my-generation generation
+          if random 100 < errors [ mutate ] ; use errors as mutation rate (per individual)
+        ]
+      ]
+    ]
+    ; remove last generation
+    ask turtles with [ my-generation < generation ]
+    [ let last-name my-name
+      if not any? other turtles with [my-name = last-name]
+      [ output-print
+        ( word last-name
+          " eliminated (score = "
+          precision avg-score 2
+          ")."
+        )
+      ]
+      die
+    ]
+  ]
+end
+;-------------------------------------------------------------------------------
+to output-print-score
+  output-print "Player\tCoop\tScore"
+  foreach sort-on [avg-score] turtles
+  [ ask ? [ output-print (word my-name "\t" precision avg-coop 2 "\t" precision avg-score 2) ]
+  ]
+  output-print "Player\tCoop\tScore"
+end
+;-------------------------------------------------------------------------------
+to-report one-of-weighted-by-fitness [ agents sum-fitness ]
+; uses fitness to choose one of agents.  Used to reproduce next generation
+  let rand-fitness random-float sum-fitness
+  let result nobody
+  ask agents
+  [ set rand-fitness rand-fitness - fitness
+    if result = nobody and rand-fitness <= 0 [ set result self ]
+  ]
+  report result
+end
+;-------------------------------------------------------------------------------
+to layout
+; layout positions of turtles
+  ; create a temporary turtle to pull other turtles towards center
+  let center-turtle nobody
+  create-turtles 1
+  [ set hidden? true
+    set center-turtle self
+    create-links-with other turtles [ set hidden? true ]
+  ]
+  repeat 50
+  [ ask center-turtle [ setxy max-pxcor 1 ] ; pull network to right (to fit labels in)
+    layout-spring turtles links 2 (world-height / 2 + 1) 10
+  ]
+  ask center-turtle [ die ]
+end
+;-------------------------------------------------------------------------------
+to mutate
+  if ancestor = 0 [set ancestor my-name]
+  let which random 5 ; pick one of the 5 strategies to mutate
+  if  which = 0 [ set c-on-first random-float 1 ]
+  if  which = 1 [ set c-after-cc random-float 1 ]
+  if  which = 2 [ set c-after-cd random-float 1 ]
+  if  which = 3 [ set c-after-dc random-float 1 ]
+  if  which = 4 [ set c-after-dd random-float 1 ]
+  generate-name
+end
+;-------------------------------------------------------------------------------
+to generate-name
+  set my-name
+  ( word coop-to-letter c-on-first
+    coop-to-letter c-after-cc
+    coop-to-letter c-after-cd
+    coop-to-letter c-after-dc
+    coop-to-letter c-after-dd
+  )
+end
+;-------------------------------------------------------------------------------
+to-report full-name
+  report word my-name ifelse-value (ancestor = 0) [""][word " " ancestor]
+end
+;-------------------------------------------------------------------------------
+to inspect-players
+  if-else any? turtles
+  [ if-else mouse-down?
+    [ ; find nearest turtle
+      let nearest min-one-of turtles [distancexy mouse-xcor mouse-ycor]
+;      output-print
+; my-name
+;  ; strategy
+;  c-on-first
+;  c-after-cc
+;  c-after-cd
+;  c-after-dc
+;  c-after-dd
+;  ; statistics
+;  rounds-played
+;  rounds-cooperated
+;  total-score
+;  avg-coop
+;  avg-score
+;  ; evolution
+;  my-generation
+;  fitness
+;  ancestor
+    ] ; else
+    [ output-print "Click on a player for detailed information."
+    ]
+  ] ; else
+  [ output-print "No players.  Add some with\n[add-players], [random-players], or [preset]."
+  ]
+end
+;====================== end axelrod-tournament.nlogo ========================
 @#$#@#$#@
 GRAPHICS-WINDOW
 249
 10
-721
-503
-16
-16
-14.0
+714
+340
+17
+11
+13.0
 1
-16
+17
 1
 1
 1
@@ -380,10 +553,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--16
-16
--16
-16
+-17
+17
+-11
+11
 0
 0
 1
@@ -395,7 +568,7 @@ TEXTBOX
 10
 164
 28
-New player:
+Players:
 11
 0.0
 1
@@ -413,11 +586,11 @@ String
 
 BUTTON
 149
-24
-234
-57
+62
+241
+95
 NIL
-add-player
+add-players
 NIL
 1
 T
@@ -498,7 +671,7 @@ HORIZONTAL
 MONITOR
 151
 273
-206
+221
 318
 players
 count turtles
@@ -509,7 +682,7 @@ count turtles
 MONITOR
 151
 317
-206
+221
 362
 games
 count links
@@ -520,8 +693,8 @@ count links
 BUTTON
 151
 366
-206
-446
+221
+399
 NIL
 go
 T
@@ -553,11 +726,11 @@ NIL
 
 BUTTON
 150
-62
-234
-95
-random-player
-random-player
+100
+241
+133
+NIL
+random-players
 NIL
 1
 T
@@ -613,7 +786,7 @@ C_on_1st
 C_on_1st
 0
 100
-100
+17
 1
 1
 %
@@ -628,7 +801,7 @@ C_after_CC
 C_after_CC
 0
 100
-100
+67
 1
 1
 %
@@ -643,7 +816,7 @@ C_after_CD
 C_after_CD
 0
 100
-100
+2
 1
 1
 %
@@ -658,7 +831,7 @@ C_after_DC
 C_after_DC
 0
 100
-100
+81
 1
 1
 %
@@ -673,7 +846,7 @@ C_after_DD
 C_after_DD
 0
 100
-100
+2
 1
 1
 %
@@ -698,9 +871,9 @@ NIL
 
 BUTTON
 150
-100
-234
-133
+138
+241
+171
 NIL
 remove-worst
 NIL
@@ -714,12 +887,44 @@ NIL
 1
 
 BUTTON
-150
-138
-234
-171
+151
+403
+221
+436
 NIL
-decimate
+evolve
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+149
+24
+241
+57
+how-many
+how-many
+1
+50
+1
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+150
+176
+241
+209
+NIL
+remove-name
 NIL
 1
 T
@@ -730,46 +935,119 @@ NIL
 NIL
 1
 
+OUTPUT
+249
+345
+715
+504
+11
+
+BUTTON
+150
+213
+241
+246
+NIL
+inspect-players
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
 @#$#@#$#@
-## WHAT IS IT?
+## Axelrod's tournament
 
-(a general understanding of what the model is trying to show or explain)
+A [NetLogo] model by Rik Blok.
 
-  * Axelrod's tournament with restrictions
-  * fixed number of rounds
-  * only pure, memory-one strategies
+[http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:axelrod_s_tournament:start](http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:axelrod_s_tournament:start)
 
-## HOW IT WORKS
+How can cooperation arise and persist when there is a temptation to "defect" from cooperation for personal gain?  [Cooperation](https://en.wikipedia.org/wiki/Cooperation) is a well-studied problem in economics, social sciences, and evolution.
 
-(what rules the agents use to create the overall behavior of the model)
+Let's construct a simple scenario to highlight the problem.  Consider an interaction between two individuals where each player can, at a cost _c>0_ to themselves, confer a benefit _b>c_ to the other player:
+
+* If I cooperate I pay a cost _c>0_ and
+* If you cooperate I receive a benefit _b>c_.
+
+If you and I are playing this [Prisoner's Dilemma](https://en.wikipedia.org/wiki/Prisoner%27s_dilemma) game what should we choose?  Clearly it would be best for both of us if we could **cooperate** so we each earn a net amount of _b-c>0_.  But it would be better yet if we didn't pay the cost _c_.  If we both try to gain the highest payoff by avoiding the cost then we will get nothing (because nobody generated the benefit).  Cooperation is undermined because _no matter what you choose_, _I_ always feel the temptation to **defect** and avoid paying the cost -- it is difficult for cooperation to arise and persist in this game.
+
+Repetition was proposed as a solution to this dilemma: perhaps if the players repeated the interaction many times, the prospect of reciprocal cooperation in the future would encourage players to cooperate now.
+
+In each round a player can choose to **cooperate** or **defect** but their choice may depend on many details, such as what they and/or the other player did in the past.  For example, I would like to receive the benefit _b_ from you in every round.  If I received it last round I might repeat the same choice (don't make any changes if things are going well, or "win-stay") but if I didn't I might choose the other option (switch if things are going poorly, or "lose-switch").  This well-known strategy is called Pavlov, or [win-stay, lose-switch](https://en.wikipedia.org/wiki/Win%E2%80%93stay,_lose%E2%80%93switch).  If both players use the Pavlov strategy and cooperate in the first round, they will continue to cooperate for all rounds, doing much better than strategies that mutually fall for the temptation to defect.  (But Pavlov is not guaranteed to perform well when playing against these strategies.)
+
+In the early 1980s [Robert Axelrod](https://en.wikipedia.org/wiki/Robert_Axelrod) invited colleagues to submit strategies to a series of round-robin tournaments to see which strategies would do well playing an [iterated Prisoner's Dilemma](https://en.wikipedia.org/wiki/Prisoner%27s_dilemma#The_iterated_prisoner.27s_dilemma).  This [NetLogo] model allows you to try [Axelrod's tournaments](https://en.wikipedia.org/wiki/The_Evolution_of_Cooperation#Axelrod.27s_tournaments) yourself by creating some strategies and testing them in an iterated Prisoner's Dilemma.
+
+
+## How it works
+
+
+### go
+
+The [go] button starts a [round-robin tournament](https://en.wikipedia.org/wiki/Round-robin_tournament) where all strategies are paired with each other to play the Prisoner's Dilemma for a specified number of rounds.  The average score for each player is shown beside their name.  At the end of the tournament all players' average scores are shown in the output window.
+
+
+### Memory-one strategies
+
+In Axelrod's tournament game theorists were invited to submit any strategies that could be encoded as computer programs.  The programs had as input the entire history of the interaction so far and would respond with a choice to **cooperate** or **defect** in the next round.  That's far beyond the scope of this simulation.
+
+Instead, each strategy consists of a set of five numbers, representing the probability of cooperating in the next round given what occured only in the previous round:
+
+* **C_on_1st** = probability that I **cooperate** in the first round.
+* **C_after_CC** = probability that I **cooperate** after _we both cooperated_ in the previous round.
+* **C_after_CD** = probability that I **cooperate** after _I cooperated_ and _you defected_ in the previous round.
+* **C_after_CD** = probability that I **cooperate** after _I defected_ and _you cooperated_ in the previous round.
+* **C_after_CC** = probability that I **cooperate** after _we both defected_ in the previous round.
+
+Even though this severely limits the available strategies, it is still possible to create some well-known strategies:
+
+* AllC = (100%, 100%, 100%, 100%, 100%).  Always cooperates.
+* AllD = ( 0%, 0%, 0%, 0%, 0%).  Always defects.
+* [Tit-for-tat](https://en.wikipedia.org/wiki/Tit_for_tat#In_game_theory) = (100%, 100%, 0%, 100%, 0%).  Cooperates on first round.  After that, repeats other player's last choice.
+* [Pavlov](https://en.wikipedia.org/wiki/Win%E2%80%93stay,_lose%E2%80%93switch) = (100%, 100%, 0%, 0%, 100%).  Cooperates on first round.  After that, repeats last move if received _b_, otherwise switches.
+* [Grim](https://en.wikipedia.org/wiki/Grim_trigger) = (100%, 100%, 0%, 0%, 0%).  Cooperates on first round.  After that, keeps cooperating until anybody defects.  Then defects for rest of game.
+
+Click [presets] to explore other interesting strategies.
+
+
+### evolve
+
+The [evolve] button allows the user to explore how the population of strategies evolves over many tournaments.  Between each tournament a new generation of strategies is created by sampling the current generation.  The probability of each strategy reproducing into the next generation is proportional to its average score plus **cost-to-self** (to guarantee a non-negative probability).
+
 
 ## HOW TO USE IT
 
 (how to use the model, including a description of each of the items in the Interface tab)
 
-## THINGS TO NOTICE
+???????????????????????
 
-(suggested things for the user to notice while running the model)
 
-## THINGS TO TRY
+## Things to notice
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+### Errors
 
-## EXTENDING THE MODEL
+Notice that it is possible to introduce _implementation errors_ into the game: a strategy may intend to **cooperate** or **defect** but erroneously choose the other option.  The error rate (per choice) is given by the **errors** slider.
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+The **errors** slider also allows reproduction errors, or mutations.  In this case the value gives the mutation rate per child.  If a mutation occurs one of the five variables representing the strategy is replaced with a random value.
 
-## NETLOGO FEATURES
+### Fixed number of rounds
 
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
+Axelrod set up his tournament so each game between two players had an uncertain duration.  That prevented strategies from being conditioned on how many rounds remained.  (It's always best to **defect** in the last round.  But if I know that, I should also **defect** in the second-to-last round...)  That's not an issue in this simulation because memory-one strategies aren't sophisticated enough to condition their response on the number of remaining rounds.  So this tournament allows a certain, fixed number of rounds.
 
-## RELATED MODELS
 
-(models in the NetLogo Models Library and elsewhere which are of related interest)
+## Things to try
 
-## CREDITS AND REFERENCES
+What do you expect to happen if the error rate is set to 50%?  (Hint: For each of the five memory-one conditions, what is the probability any player will choose erroneously?)
 
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+
+## References
+
+[[NetLogo]] Wilensky, U. NetLogo. [http://ccl.northwestern.edu/netlogo/](http://ccl.northwestern.edu/netlogo/). Center for Connected Learning and Computer-Based Modeling, Northwestern University. Evanston, IL. 1999.
+
+[NetLogo]: http://ccl.northwestern.edu/netlogo/
 @#$#@#$#@
 default
 true
