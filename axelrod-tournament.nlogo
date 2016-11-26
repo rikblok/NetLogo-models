@@ -12,12 +12,12 @@
 ; binary, for any purpose, commercial or non-commercial, and by any
 ; means.
 ;
-; Revisions:
-;
-;   2016-11-14 - initial release by Rik Blok
+; See <https://github.com/rikblok/NetLogo-models/commits/master/axelrod-tournament.nlogo>
+; for change history.
 ;-------------------------------------------------------------------------------
 globals
 [ generation ; count of generations, used by evolve
+  last-inspect-output
 ]
 ;-------------------------------------------------------------------------------
 turtles-own
@@ -221,7 +221,6 @@ to reset-same-players
     draw-node
   ]
   layout ; space nodes out to make easier to see
-  output-print "Strategies reset."
 end
 ;-------------------------------------------------------------------------------
 to go
@@ -394,11 +393,11 @@ to evolve
     let mean-score mean [avg-score] of turtles
     let min-score min [avg-score] of turtles
     output-print
-    ( word "Generation " generation ": min, mean, max score = "
-      precision min-score 2  ", "
-      precision mean-score 2 ", "
+    ( word "Generation " generation ": Scores = "
+      precision min-score 2  " .. "
+      precision mean-score 2 " .. "
       precision max-score 2 " ("
-      [my-name] of one-of turtles with [ avg-score = max-score] ")"
+      [my-name] of one-of turtles with [ avg-score = max-score] " best)"
     )
     if max-score = min-score
     [ ; no selection possible, stop
@@ -448,7 +447,13 @@ end
 to output-print-score
   output-print "Player\tCoop\tScore"
   foreach sort-on [avg-score] turtles
-  [ ask ? [ output-print (word my-name "\t" precision avg-coop 2 "\t" precision avg-score 2) ]
+  [ ask ?
+    [ output-print
+      ( word my-name "\t"
+        precision (100 * avg-coop) 0 "%\t"
+        precision avg-score 2
+      )
+    ]
   ]
   output-print "Player\tCoop\tScore"
 end
@@ -506,34 +511,46 @@ to-report full-name
 end
 ;-------------------------------------------------------------------------------
 to inspect-players
+  let do-stop? false ; set to true below to stop the inspect-players button
+  let inspect-output ""
   if-else any? turtles
-  [ if-else mouse-down?
-    [ ; find nearest turtle
-      let nearest min-one-of turtles [distancexy mouse-xcor mouse-ycor]
-;      output-print
-; my-name
-;  ; strategy
-;  c-on-first
-;  c-after-cc
-;  c-after-cd
-;  c-after-dc
-;  c-after-dd
-;  ; statistics
-;  rounds-played
-;  rounds-cooperated
-;  total-score
-;  avg-coop
-;  avg-score
-;  ; evolution
-;  my-generation
-;  fitness
-;  ancestor
-    ] ; else
-    [ output-print "Click on a player for detailed information."
+  [ ; find nearest turtle
+    let nearest min-one-of turtles [distancexy mouse-xcor mouse-ycor]
+    ask nearest
+    [ if distancexy mouse-xcor mouse-ycor < 0.5
+      [ set inspect-output
+        ( word
+          "Inspecting " my-name " ("
+          precision (100 * c-on-first) 0 "%,"
+          precision (100 * c-after-cc) 0 "%,"
+          precision (100 * c-after-cd) 0 "%,"
+          precision (100 * c-after-dc) 0 "%,"
+          precision (100 * c-after-dd) 0 "%): "
+          "Coop=" precision (100 * avg-coop) 0 "%, "
+          "Score=" precision avg-score 2
+          ifelse-value (ancestor = 0) [""][word ", Ancestor=" ancestor ]
+        )
+        ; populate user interface
+        set name my-name
+        set C_on_1st   precision (100 * c-on-first) 0
+        set C_after_CC precision (100 * c-after-cc) 0
+        set C_after_CD precision (100 * c-after-cd) 0
+        set C_after_DC precision (100 * c-after-dc) 0
+        set C_after_DD precision (100 * c-after-dd) 0
+        ; stop this routine if user clicks on player
+        set do-stop? mouse-down?
+      ]
+    ]
+    if inspect-output != last-inspect-output
+    [ set last-inspect-output inspect-output
+      output-print last-inspect-output
     ]
   ] ; else
   [ output-print "No players.  Add some with\n[add-players], [random-players], or [preset]."
+    stop
   ]
+  ; if user clicked on player then stop inspect-players
+  if do-stop? [ stop ]
 end
 ;====================== end axelrod-tournament.nlogo ========================
 @#$#@#$#@
@@ -787,7 +804,7 @@ C_on_1st
 C_on_1st
 0
 100
-17
+100
 1
 1
 %
@@ -802,7 +819,7 @@ C_after_CC
 C_after_CC
 0
 100
-67
+100
 1
 1
 %
@@ -817,7 +834,7 @@ C_after_CD
 C_after_CD
 0
 100
-2
+0
 1
 1
 %
@@ -832,7 +849,7 @@ C_after_DC
 C_after_DC
 0
 100
-81
+100
 1
 1
 %
@@ -847,7 +864,7 @@ C_after_DD
 C_after_DD
 0
 100
-2
+0
 1
 1
 %
@@ -961,7 +978,7 @@ NIL
 1
 
 @#$#@#$#@
-## Axelrod's tournament
+# Axelrod's tournament
 
 A [NetLogo] model by Rik Blok.
 
@@ -971,8 +988,8 @@ How can cooperation arise and persist when there is a temptation to "defect" fro
 
 Let's construct a simple scenario to highlight the problem.  Consider an interaction between two individuals where each player can, at a cost _c>0_ to themselves, confer a benefit _b>c_ to the other player:
 
-* If I cooperate I pay a cost _c>0_ and
-* If you cooperate I receive a benefit _b>c_.
+* If I cooperate I pay a cost _c_ and
+* If you cooperate I receive a benefit _b_.
 
 If you and I are playing this [Prisoner's Dilemma](https://en.wikipedia.org/wiki/Prisoner%27s_dilemma) game what should we choose?  Clearly it would be best for both of us if we could **cooperate** so we each earn a net amount of _b-c>0_.  But it would be better yet if we didn't pay the cost _c_.  If we both try to gain the highest payoff by avoiding the cost then we will get nothing (because nobody generated the benefit).  Cooperation is undermined because _no matter what you choose_, _I_ always feel the temptation to **defect** and avoid paying the cost -- it is difficult for cooperation to arise and persist in this game.
 
@@ -980,20 +997,20 @@ Repetition was proposed as a solution to this dilemma: perhaps if the players re
 
 In each round a player can choose to **cooperate** or **defect** but their choice may depend on many details, such as what they and/or the other player did in the past.  For example, I would like to receive the benefit _b_ from you in every round.  If I received it last round I might repeat the same choice (don't make any changes if things are going well, or "win-stay") but if I didn't I might choose the other option (switch if things are going poorly, or "lose-switch").  This well-known strategy is called Pavlov, or [win-stay, lose-switch](https://en.wikipedia.org/wiki/Win%E2%80%93stay,_lose%E2%80%93switch).  If both players use the Pavlov strategy and cooperate in the first round, they will continue to cooperate for all rounds, doing much better than strategies that mutually fall for the temptation to defect.  (But Pavlov is not guaranteed to perform well when playing against these strategies.)
 
-In the early 1980s [Robert Axelrod](https://en.wikipedia.org/wiki/Robert_Axelrod) invited colleagues to submit strategies to a series of round-robin tournaments to see which strategies would do well playing an [iterated Prisoner's Dilemma](https://en.wikipedia.org/wiki/Prisoner%27s_dilemma#The_iterated_prisoner.27s_dilemma).  This [NetLogo] model allows you to try [Axelrod's tournaments](https://en.wikipedia.org/wiki/The_Evolution_of_Cooperation#Axelrod.27s_tournaments) yourself by creating some strategies and testing them in an iterated Prisoner's Dilemma.
+In the early 1980s [Robert Axelrod](https://en.wikipedia.org/wiki/Robert_Axelrod) invited colleagues to submit strategies to a series of round-robin tournaments [[Axelrod & Hamilton, 1981]] to see which strategies would do well playing an [iterated Prisoner's Dilemma](https://en.wikipedia.org/wiki/Prisoner%27s_dilemma#The_iterated_prisoner.27s_dilemma).  This [NetLogo] model allows you to try [Axelrod's tournaments](https://en.wikipedia.org/wiki/The_Evolution_of_Cooperation#Axelrod.27s_tournaments) yourself by creating some strategies and testing them in an iterated Prisoner's Dilemma.
 
 
-## How it works
+# How it works
 
 
-### go
+## go
 
 The [go] button starts a [round-robin tournament](https://en.wikipedia.org/wiki/Round-robin_tournament) where all strategies are paired with each other to play the Prisoner's Dilemma for a specified number of rounds.  The average score for each player is shown beside their name.  At the end of the tournament all players' average scores are shown in the output window.
 
 
-### Memory-one strategies
+## Memory-one strategies
 
-In Axelrod's tournament game theorists were invited to submit any strategies that could be encoded as computer programs.  The programs had as input the entire history of the interaction so far and would respond with a choice to **cooperate** or **defect** in the next round.  That's far beyond the scope of this simulation.
+In Axelrod's tournament game theorists were invited to submit any strategies that could be encoded as computer programs.  The programs had as input the entire history of the interaction so far and would respond with a choice to **cooperate** or **defect** in the next round [[Axelrod, 1980]].  That's far beyond the scope of this simulation.
 
 Instead, each strategy consists of a set of five numbers, representing the probability of cooperating in the next round given what occured only in the previous round:
 
@@ -1014,40 +1031,98 @@ Even though this severely limits the available strategies, it is still possible 
 Click [presets] to explore other interesting strategies.
 
 
-### evolve
+## evolve
 
 The [evolve] button allows the user to explore how the population of strategies evolves over many tournaments.  Between each tournament a new generation of strategies is created by sampling the current generation.  The probability of each strategy reproducing into the next generation is proportional to its average score plus **cost-to-self** (to guarantee a non-negative probability).
 
 
-## HOW TO USE IT
+# How to use it
 
-(how to use the model, including a description of each of the items in the Interface tab)
+## Adding players
 
-???????????????????????
+To run a tournament you first need to add some players (also called strategies).  You can add your own by choosing slider values and (optionally) giving the strategy a name, then clicking the [add-players] button.  (You can add duplicates of a strategy by adjusting the [how-many] slider before clicking [add-players].)
+
+Alternatively, you can click the [random-players] button to add one (or [how-many]) randomly-chosen strategies.
+
+You can also click the [presets] button at the bottom to add a bunch of pre-defined strategies.  Most of these were submitted by students in the UBC course [ISCI 344 Game Theory](https://intsci.ubc.ca/courses/isci344).
+
+## Running a tournament
+
+### go
+
+Once you've got a pool of players you can run a round-robin tournament between them by clicking the [go] button.  Choose the following parameters:
+
+* **number-of-rounds**: The number of repetitions (rounds) of the game played between each pair of players.
+* **cost-to-self**: The cost each player pays for choosing to cooperate.
+* **benefit-to-other**: The benefit received if the other player chooses to cooperate.  When the benefit is more than the cost there is an incentive to choose mutual cooperation, but a temptation to defect -- a Prisoner's Dilemma.
+* **play-self**: Toggle on to have each player also play against themselves in the tournament.  They are actually playing against a mirror image -- their opponent makes exactly the same choices as they do (even duplicating any errors).
+* **errors**: The chance of making an implementation error with any choice.  With implementation errors players perceive the conditions (eg. what happened in the last round) correctly and determine their response correctly according to their strategy, but they accidentally select the option opposite to what they intended.  Set this to zero for perfect fidelity (players always successfully make the choice they intended).  **errors** also sets the mutation rate under [evolve] (see the next section).
+
+At the end of the tournament all the player scores and level of cooperation (fraction of times they cooperated) are shown.
 
 
-## Things to notice
+### inspect-players
 
-### Errors
+You can view the score and other details of any of the players.  Press the [inspect-players] button to enable this functionality.  Then hover over any player to see their attributes including their name, strategy (five percentages), average frequency of cooperation, and average score so far.
+
+Inspecting a player also populates the "Players:" view (name and strategy sliders) so you can easily remove this player or add more of the same.  (Hint: You can stop [inspect-players] so that the current player remains in the view by clicking on the player.)
+
+
+### evolve
+
+In addition to running the tournament once and seeing the scores, it is possible to run it repeatedly, and select for the highest scoring strategies.  Each generation, the players are selected to form the next generation with likelihood [proportional to their fitness](https://en.wikipedia.org/wiki/Fitness_proportionate_selection) where
+> _fitness = average-score + cost-to-self_
+
+so that the minimum probability of selection is never negative.
+
+The population size is conserved across generations.  Since lower-fitness strategies are less likely to be copied into the next generation this evolutionary process selects for higher fitness strategies.
+
+As strategies are copied into the next generation, replication errors (_mutations_) are possible.  The [errors] slider gives the likelihood that a child will have a mutation from its parent.  If a mutation occurs, one of the five probabilities is replaced with a random value.
+
+
+## Removing players
+
+You can remove players at any time by entering their name in the [Name] box and clicking [remove-name].  Note that this removes _all_ players with that name.
+
+You can also remove the player with the lowest average score with the [remove-worst] button.
+
+
+# Things to notice
+
+
+## Errors
 
 Notice that it is possible to introduce _implementation errors_ into the game: a strategy may intend to **cooperate** or **defect** but erroneously choose the other option.  The error rate (per choice) is given by the **errors** slider.
 
 The **errors** slider also allows reproduction errors, or mutations.  In this case the value gives the mutation rate per child.  If a mutation occurs one of the five variables representing the strategy is replaced with a random value.
 
-### Fixed number of rounds
 
-Axelrod set up his tournament so each game between two players had an uncertain duration.  That prevented strategies from being conditioned on how many rounds remained.  (It's always best to **defect** in the last round.  But if I know that, I should also **defect** in the second-to-last round...)  That's not an issue in this simulation because memory-one strategies aren't sophisticated enough to condition their response on the number of remaining rounds.  So this tournament allows a certain, fixed number of rounds.
+## Fixed number of rounds
 
-
-## Things to try
-
-What do you expect to happen if the error rate is set to 50%?  (Hint: For each of the five memory-one conditions, what is the probability any player will choose erroneously?)
+Axelrod set up his tournament so each game between two players had an uncertain duration [[Axelrod, 1980]].  That prevented strategies from being conditioned on how many rounds remained.  (It's always best to **defect** in the last round.  But if I know that, I should also **defect** in the second-to-last round...)  That's not an issue in this simulation because memory-one strategies aren't sophisticated enough to condition their response on the number of remaining rounds.  So this tournament allows a certain, fixed number of rounds.
 
 
-## References
+## Fitness landscape
 
-[[NetLogo]] Wilensky, U. NetLogo. [http://ccl.northwestern.edu/netlogo/](http://ccl.northwestern.edu/netlogo/). Center for Connected Learning and Computer-Based Modeling, Northwestern University. Evanston, IL. 1999.
+You may be surprised to see the average score (or _fitness_) drop as the population evolves.  Evolution is often thought of as climbing a [fitness landscape](https://en.wikipedia.org/wiki/Fitness_landscape).  That makes sense when the fitness is unchanging.  But in this model the fitness of each strategy depends strictly on the other strategies in the population.  As the population composition changes the fitness of the population may decline.  Nevertheless, the most successful within that population will tend to reproduce more frequently.  Counterintuitively, in this way it is possible for the system to evolve to low fitness.  It is akin to climbing a hill that collapses as it is being climbed.
 
+
+# Things to try
+
+What do you expect to happen if the error rate is set to 50%?  (Hint: For each of the five memory-one conditions, what is the probability any player will choose erroneously?)  Check if you're right!
+
+
+# References
+
+**[[Axelrod, 1980]]** Axelrod, Robert. 1980. “More Effective Choice in the Prisoner’s Dilemma.” _Journal of Conflict Resolution_ 24 (3): 379–403. doi:[10.1177/002200278002400301](http://dx.doi.org/10.1177%2F002200278002400301).
+
+**[[Axelrod & Hamilton, 1981]]** Axelrod, R., and W. D. Hamilton. 1981. “The Evolution of Cooperation.” _Science_ 211 (4489): 1390–96. doi:[10.1126/science.7466396](https://doi.org/10.1126/science.7466396).
+
+**[[NetLogo]]** Wilensky, U. 1999. “NetLogo.” [http://ccl.northwestern.edu/netlogo/](http://ccl.northwestern.edu/netlogo/). Center for Connected Learning and Computer-Based Modeling, Northwestern University. Evanston, IL. 1999.
+
+
+[Axelrod, 1980]: https://www.zotero.org/rikblok/items/itemKey/I8SMT8KB
+[Axelrod & Hamilton, 1981]: https://www.zotero.org/rikblok/items/itemKey/EBG8XDKU
 [NetLogo]: http://ccl.northwestern.edu/netlogo/
 @#$#@#$#@
 default
