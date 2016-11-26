@@ -982,7 +982,7 @@ NIL
 
 A [NetLogo] model by Rik Blok.
 
-[http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:axelrod_s_tournament:start](http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:axelrod_s_tournament:start)
+[http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:popmod:axelrod_s_tournament:start](http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:popmod:axelrod_s_tournament:start)
 
 How can cooperation arise and persist when there is a temptation to "defect" from cooperation for personal gain?  [Cooperation](https://en.wikipedia.org/wiki/Cooperation) is a well-studied problem in economics, social sciences, and evolution.
 
