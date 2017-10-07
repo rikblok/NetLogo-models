@@ -447,7 +447,7 @@ end
 to output-print-score
   output-print "Player\tCoop\tScore"
   foreach sort-on [avg-score] turtles
-  [ ask ?
+  [ ?1 -> ask ?1
     [ output-print
       ( word my-name "\t"
         precision (100 * avg-coop) 0 "%\t"
@@ -557,10 +557,10 @@ end
 GRAPHICS-WINDOW
 249
 10
-714
-340
-17
-11
+712
+318
+-1
+-1
 13.0
 1
 17
@@ -645,7 +645,7 @@ benefit-to-other
 benefit-to-other
 0
 4
-3
+3.0
 0.5
 1
 NIL
@@ -680,7 +680,7 @@ cost-to-self
 cost-to-self
 0
 2
-1
+1.0
 0.5
 1
 NIL
@@ -789,7 +789,7 @@ errors
 errors
 0
 50
-2
+2.0
 1
 1
 %
@@ -804,7 +804,7 @@ C_on_1st
 C_on_1st
 0
 100
-100
+96.0
 1
 1
 %
@@ -819,7 +819,7 @@ C_after_CC
 C_after_CC
 0
 100
-100
+20.0
 1
 1
 %
@@ -834,7 +834,7 @@ C_after_CD
 C_after_CD
 0
 100
-0
+84.0
 1
 1
 %
@@ -849,7 +849,7 @@ C_after_DC
 C_after_DC
 0
 100
-100
+54.0
 1
 1
 %
@@ -864,7 +864,7 @@ C_after_DD
 C_after_DD
 0
 100
-0
+17.0
 1
 1
 %
@@ -930,7 +930,7 @@ how-many
 how-many
 1
 50
-1
+1.0
 1
 1
 NIL
@@ -1429,9 +1429,8 @@ false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
-
 @#$#@#$#@
-NetLogo 5.3.1
+NetLogo 6.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -1447,7 +1446,6 @@ true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 0
 @#$#@#$#@
