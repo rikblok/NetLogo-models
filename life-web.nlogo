@@ -69,8 +69,8 @@ to draw
 end
 
 to turn-on
-  if (pcolor != yellow) [ 
-    set count-alive  count-alive + 1 
+  if (pcolor != yellow) [
+    set count-alive  count-alive + 1
     ask neighbors [
       set new-nbrs  new-nbrs + 1
     ]
@@ -80,7 +80,7 @@ end
 
 to turn-off
   if (pcolor = yellow) [
-    set count-alive  count-alive - 1 
+    set count-alive  count-alive - 1
     ask neighbors [
       set new-nbrs  new-nbrs - 1
     ]
@@ -100,8 +100,8 @@ end
 GRAPHICS-WINDOW
 199
 10
-721
-553
+719
+531
 -1
 -1
 4.0
@@ -167,7 +167,7 @@ synchronicity
 synchronicity
 1
 100
-100
+100.0
 1
 1
 %
@@ -211,7 +211,7 @@ initial-density
 initial-density
 0
 100
-10
+10.0
 5
 1
 %
@@ -556,9 +556,8 @@ Line -16777216 false 58 211 67 192
 Polygon -6459832 true true 38 138 66 149
 Polygon -6459832 true true 46 128 33 120 21 118 11 123 3 138 5 160 13 178 9 192 0 199 20 196 25 179 24 161 25 148 45 140
 Polygon -6459832 true true 67 122 96 126 63 144
-
 @#$#@#$#@
-NetLogo 5.2.0
+NetLogo 6.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -574,7 +573,6 @@ true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 0
 @#$#@#$#@

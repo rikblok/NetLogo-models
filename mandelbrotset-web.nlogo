@@ -1,7 +1,7 @@
-globals [ 
-  xmin ymin xmax ymax 
+globals [
+  xmin ymin xmax ymax
   was-mouse-down? was-mouse-xcor was-mouse-ycor
-  was-record-mov was-record-png 
+  was-record-mov was-record-png
   png-file-prefix png-file-index
   was-multibrot-exp was-generalization
   was-going
@@ -52,7 +52,7 @@ to zoom
   let xslope width  / ( max-pxcor - min-pxcor )
   let yslope height / ( max-pycor - min-pycor )
   ask patches [
-    set pcolor black 
+    set pcolor black
     set x (pxcor - min-pxcor) * xslope + xmin
     set y (pycor - min-pycor) * yslope + ymin
     set real 0
@@ -70,12 +70,12 @@ to go
     output-print "Click to zoom or\npress the +/- keys."
     set was-going true
   ]
-  if (d-multibrot-exp     != was-multibrot-exp    ) [ 
-    zoom 
+  if (d-multibrot-exp     != was-multibrot-exp    ) [
+    zoom
     output-print "\nChange the multibrot\nexponent d, z->z^d+c."
   ]
-  if (generalization != was-generalization) [ 
-    zoom 
+  if (generalization != was-generalization) [
+    zoom
     output-print "\nChoose a generalization\nof the Mandelbrot set."
   ]
   ; check for changed record switches
@@ -174,7 +174,7 @@ to go
     set was-mouse-down? false
     zoom
   ]
-  
+
 ;  let hue ticks mod 256
 ;  let sat 255 - 20 * int ( ticks / 256 )
   let slow-ticks 1.25 * ticks ^ 0.8 ; increases slower than ticks for large ticks
@@ -190,7 +190,7 @@ to go
     let oldreal real
     set real x + re-pow real    imag d-multibrot-exp ; Re(z_{n+1}) = x + Re(z_n^multibrot-exp)
     set imag y + im-pow oldreal imag d-multibrot-exp ; Im(z_{n+1}) = x + Im(z_n^multibrot-exp)
-    ifelse (real * real + imag * imag) > 4 [ 
+    ifelse (real * real + imag * imag) > 4 [
       ; diverges
       set pcolor _hsb hue sat 100
       set changes changes + 1
@@ -214,7 +214,7 @@ to go
       ]
     ]
   ]
-  if (changes > 0) [ 
+  if (changes > 0) [
 ;    if (ticks > tick-last-change + 1) [ print ticks ]
     set tick-last-change ticks
   ]
@@ -338,12 +338,12 @@ end
 
 
 to zoom-every
-  if (ticks > ( tick-last-change + ticks-per-zoom ) ) [ 
-    ifelse mouse-zooms-in [ 
+  if (ticks > ( tick-last-change + ticks-per-zoom ) ) [
+    ifelse mouse-zooms-in [
       zoom-in
       output-print "\nAutomatically zoomed in"
     ][
-      zoom-out 
+      zoom-out
       output-print "\nAutomatically zoomed out"
     ]
     output-type "after " output-type ticks-per-zoom output-print " unchanged ticks."
@@ -355,12 +355,12 @@ to-report zoom-power
 end
 
 ;==================== begin hsb.nls ========================================
-; _hsb - Reports a RGB list when given three numbers describing an HSB color. Hue, saturation, 
-;  and brightness are integers in the range 0-360, 0-100, 0-100 respectively. The RGB list 
+; _hsb - Reports a RGB list when given three numbers describing an HSB color. Hue, saturation,
+;  and brightness are integers in the range 0-360, 0-100, 0-100 respectively. The RGB list
 ;  contains three integers in the range of 0-255.  Like hsb primitive for versions of
 ;  NetLogo that don't support it.
 ;
-; Converted from <https://github.com/NetLogo/NetLogo/blob/5.x/src/main/org/nlogo/prim/etc/_hsb.scala> 
+; Converted from <https://github.com/NetLogo/NetLogo/blob/5.x/src/main/org/nlogo/prim/etc/_hsb.scala>
 ; and <http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/java/awt/Color.java>
 ; By Rik Blok, 2015 <http://www.zoology.ubc.ca/~rikblok/wiki/doku.php>
 ;
@@ -456,14 +456,14 @@ to-report HSBtoRGB [ _hue _saturation _brightness ]
   ]
   ]
   report ( list r g b )
-end  
+end
 ;==================== end hsb.nls ========================================
 @#$#@#$#@
 GRAPHICS-WINDOW
 287
 42
-598
-374
+596
+352
 -1
 -1
 1.0
@@ -659,7 +659,7 @@ jump-size
 jump-size
 1
 50
-25
+25.0
 1
 1
 %
@@ -685,7 +685,7 @@ ticks-per-zoom
 ticks-per-zoom
 5
 500
-300
+300.0
 5
 1
 NIL
@@ -711,7 +711,7 @@ d-multibrot-exp
 d-multibrot-exp
 2
 6
-2
+2.0
 1
 1
 NIL
@@ -1106,9 +1106,8 @@ false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
-
 @#$#@#$#@
-NetLogo 5.2.0
+NetLogo 6.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -1124,7 +1123,6 @@ true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 0
 @#$#@#$#@

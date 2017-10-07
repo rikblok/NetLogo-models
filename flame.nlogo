@@ -77,13 +77,13 @@ to go
     if age > 255 [ die ]
     set color ( sentence 255 ( 255 - age ) 0 opacity )
     set size 1 - age / 255
-    ;set color scale-color 
+    ;set color scale-color
   ]
   tick
 end
 
 to add-fuel
-  sprout 1 [ 
+  sprout 1 [
     ; include some variation in starting "age" of flame particle
     set age random 64
     set color ( sentence 255 ( 255 - age ) 0 opacity )
@@ -101,7 +101,7 @@ to-report hint [ def new old ]
   ;
   if new != old [
     output-print def
-    output-print ( word "changed by " ( new - old ) ".\n" )    
+    output-print ( word "changed by " ( new - old ) ".\n" )
   ]
   report new
 end
@@ -109,10 +109,10 @@ end
 GRAPHICS-WINDOW
 210
 10
-649
-158
-16
-4
+647
+136
+-1
+-1
 13.0
 1
 10
@@ -176,7 +176,7 @@ opacity
 opacity
 0
 255
-150
+150.0
 5
 1
 NIL
@@ -191,7 +191,7 @@ fuel
 fuel
 0
 world-width
-32
+32.0
 1
 1
 NIL
@@ -206,7 +206,7 @@ eddies
 eddies
 0
 90
-50
+50.0
 5
 1
 NIL
@@ -566,9 +566,8 @@ false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
-
 @#$#@#$#@
-NetLogo 5.0.3
+NetLogo 6.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -576,15 +575,14 @@ NetLogo 5.0.3
 @#$#@#$#@
 default
 0.0
--0.2 0 1.0 0.0
+-0.2 0 0.0 1.0
 0.0 1 1.0 0.0
-0.2 0 1.0 0.0
+0.2 0 0.0 1.0
 link direction
 true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 0
 @#$#@#$#@

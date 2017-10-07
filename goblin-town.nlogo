@@ -144,7 +144,7 @@ to setup-platforms
   let grid-size maze-complexity + 1
   set num-platforms grid-size ^ 2
   ; create a shuffled list of numbers [2 ... num-platforms - 1]
-  let platform-list shuffle n-values (num-platforms - 2) [? + 2]
+  let platform-list shuffle n-values (num-platforms - 2) [ ?1 -> ?1 + 2 ]
   ; add leading 1 and trailing num-platforms
   set platform-list fput 1 lput num-platforms platform-list
   ; place platforms on grid
@@ -451,8 +451,8 @@ end
 GRAPHICS-WINDOW
 263
 10
-713
-401
+711
+379
 -1
 -1
 4.0
@@ -501,7 +501,7 @@ maze-complexity
 maze-complexity
 1
 5
-3
+3.0
 1
 1
 NIL
@@ -533,7 +533,7 @@ num-goblins
 num-goblins
 20
 180
-180
+180.0
 20
 1
 NIL
@@ -566,7 +566,7 @@ trials
 trials
 1
 21
-7
+7.0
 2
 1
 NIL
@@ -951,9 +951,8 @@ false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
-
 @#$#@#$#@
-NetLogo 5.3.1
+NetLogo 6.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -969,7 +968,6 @@ true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 0
 @#$#@#$#@
