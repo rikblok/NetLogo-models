@@ -104,41 +104,41 @@ to setup
 
   ; merge all events into one master list [2013-07-29]
   add-per-capita-event turtles                  ; N -> 2 N @ rate 1
-    task [ 1 ]
-    task [ hatch 1 ]
+    [ [] ->  1 ]
+    [ [] ->  hatch 1 ]
   add-per-capita-event turtles                  ; N + N -> N @ rate 1
-    task [ count other turtles-here ]
-    task [ die ]
+    [ [] ->  count other turtles-here ]
+    [ [] ->  die ]
   add-per-capita-event turtles                  ; N + F -> 2 N @ rate beta
-    task [ beta-food * food ]
-    task [ set food food - 1
+    [ [] ->  beta-food * food ]
+    [ [] ->  set food food - 1
            hatch 1           ]
   add-per-capita-event turtles                  ; N + T -> 0 @ rate delta
-    task [ delta-toxin * toxin ]
-    task [ set toxin toxin - 1
+    [ [] ->  delta-toxin * toxin ]
+    [ [] ->  set toxin toxin - 1
            die                 ]
   add-per-capita-event wilds                    ; W -> 0 @ rate x
-    task [ x-wild-cost ]
-    task [ die ]
+    [ [] ->  x-wild-cost ]
+    [ [] ->  die ]
   add-per-capita-event wilds                    ; W -> W + F @ rate b
-    task [ b-shared-benefit ]
-    task [ set food food + 1 ]
+    [ [] ->  b-shared-benefit ]
+    [ [] ->  set food food + 1 ]
   add-per-capita-event wilds                    ; W + B -> 0 @ rate gamma
-    task [ gamma-bacteriocide * bacteriocide ]
-    task [ set bacteriocide bacteriocide - 1
+    [ [] ->  gamma-bacteriocide * bacteriocide ]
+    [ [] ->  set bacteriocide bacteriocide - 1
            die                               ]
   add-per-capita-event cheaters                 ; C -> 0 @ rate q
-    task [ q-cheater-cost ]
-    task [ die ]
+    [ [] ->  q-cheater-cost ]
+    [ [] ->  die ]
   add-per-capita-event cheaters                 ; C -> C + T @ rate a
-    task [ a-toxin-production ]
-    task [ set toxin toxin + 1 ]
+    [ [] ->  a-toxin-production ]
+    [ [] ->  set toxin toxin + 1 ]
   add-per-capita-event cheaters                 ; C -> C + B @ rate e
-    task [ e-bacteriocinogen ]
-    task [ set bacteriocide bacteriocide + 1 ]
+    [ [] ->  e-bacteriocinogen ]
+    [ [] ->  set bacteriocide bacteriocide + 1 ]
   add-per-capita-event cheaters                 ; C + B -> C @ rate gamma
-    task [ gamma-bacteriocide * bacteriocide ]
-    task [ set bacteriocide bacteriocide - 1 ]
+    [ [] ->  gamma-bacteriocide * bacteriocide ]
+    [ [] ->  set bacteriocide bacteriocide - 1 ]
 end
 
 
@@ -491,9 +491,9 @@ to-report per-capita-tau
 [ per-capita-err ; desired error tolerance
 ]
   foreach per-capita-events
-  [ let event-breed  item 0 ?
-    let event-rate   item 1 ?
-    let event-index  item 3 ?
+  [ ?1 -> let event-breed  item 0 ?1
+    let event-rate   item 1 ?1
+    let event-index  item 3 ?1
     let max-rate     0        ; don't read from per-capita-max-rates, reset to zero
     ask event-breed
     [ let this-rate runresult event-rate
@@ -542,10 +542,10 @@ to-report per-capita-tau-leap
   ; shuffle event list and run through all events
   ; foreach shuffle per-capita-events ;; shuffle unknown on web
   foreach per-capita-events
-  [ let event-breed  item 0 ?
-    let event-rate   item 1 ?
-    let event-action item 2 ?
-    let event-index  item 3 ?
+  [ ?1 -> let event-breed  item 0 ?1
+    let event-rate   item 1 ?1
+    let event-action item 2 ?1
+    let event-index  item 3 ?1
     let new-max-rate 0        ; don't read from per-capita-max-rates, reset to zero
     let event-count  0
     ask event-breed
@@ -620,8 +620,8 @@ end
 ;-------------------------------------------------------------------------------
 to print-per-capita-count-events
   foreach per-capita-events
-  [ let event-breed  item 0 ?
-    let event-index  item 3 ?
+  [ ?1 -> let event-breed  item 0 ?1
+    let event-index  item 3 ?1
     let event-count  item event-index per-capita-count-events
     type event-index type " " type event-breed type " " print event-count
   ]
@@ -836,8 +836,8 @@ end
 GRAPHICS-WINDOW
 195
 264
-529
-547
+527
+525
 -1
 -1
 12.0
@@ -869,7 +869,7 @@ q-cheater-cost
 q-cheater-cost
 0
 5
-5
+5.0
 0.01
 1
 NIL
@@ -884,7 +884,7 @@ b-shared-benefit
 b-shared-benefit
 0
 15
-15
+15.0
 0.1
 1
 NIL
@@ -899,7 +899,7 @@ e-bacteriocinogen
 e-bacteriocinogen
 0
 1
-0
+0.0
 0.1
 1
 NIL
@@ -914,7 +914,7 @@ a-toxin-production
 a-toxin-production
 -0.5
 1
-0
+0.0
 0.1
 1
 NIL
@@ -1094,7 +1094,7 @@ err-tolerance
 err-tolerance
 -2
 0
--1
+-1.0
 0.2
 1
 NIL
@@ -1120,7 +1120,7 @@ x-wild-cost
 x-wild-cost
 0
 10
-10
+10.0
 0.01
 1
 NIL
@@ -1477,9 +1477,8 @@ false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
-
 @#$#@#$#@
-NetLogo 5.3.1
+NetLogo 6.0.2
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -1495,7 +1494,6 @@ true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 0
 @#$#@#$#@
