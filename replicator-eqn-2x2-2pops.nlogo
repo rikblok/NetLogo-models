@@ -12,18 +12,19 @@ end
 to setup
   clear-all
 
+  find-max-speed
+
+  set old-matrix ( word up-left up-right dn-left dn-right )
   ;; todo: get payoffs
   set pay-row-ul  1.5 set pay-col-ul  1.0    set pay-row-ur 0.0 set pay-col-ur 0.0
   set pay-row-dl -0.5 set pay-col-dl -0.5    set pay-row-dr 1.0 set pay-col-dr 1.5
 
-  find-max-speed
-  set old-matrix ( word up-lft up-rt dn-lft dn-rt )
   reset-ticks
 end
 
 to go
   ; new payoff matrix
-  let new-matrix ( word up-lft up-rt dn-lft dn-rt )
+  let new-matrix ( word up-left up-right dn-left dn-right )
   if new-matrix != old-matrix [ setup ]
 
   ; plot new trajectory
@@ -130,7 +131,7 @@ INPUTBOX
 265
 285
 325
-dn-rt
+dn-right
 1.0, 1.5
 1
 0
@@ -141,7 +142,7 @@ INPUTBOX
 265
 159
 325
-dn-lft
+dn-left
 -0.5, -0.5
 1
 0
@@ -152,7 +153,7 @@ INPUTBOX
 228
 285
 288
-up-rt
+up-right
 0.0, 0.0
 1
 0
@@ -163,7 +164,7 @@ INPUTBOX
 228
 159
 288
-up-lft
+up-left
 1.5, 1.0
 1
 0
