@@ -126,9 +126,9 @@ NIL
 0
 
 INPUTBOX
-97
+112
 265
-167
+197
 325
 dn-rt
 1.0, 1.5
@@ -139,18 +139,18 @@ String
 INPUTBOX
 30
 265
-100
+115
 325
 dn-lft
--0.5, 0.5
+-0.5, -0.5
 1
 0
 String
 
 INPUTBOX
-97
+112
 228
-167
+197
 288
 up-rt
 0.0, 0.0
@@ -161,10 +161,10 @@ String
 INPUTBOX
 30
 228
-100
+115
 288
 up-lft
-1.5, 1.1
+1.5, 1.0
 1
 0
 String
@@ -172,7 +172,7 @@ String
 TEXTBOX
 30
 210
-169
+197
 249
 Payoff matrix:
 11
@@ -290,9 +290,9 @@ dn
 1
 
 TEXTBOX
-65
+71
 233
-95
+101
 251
 left
 11
@@ -300,9 +300,9 @@ left
 1
 
 TEXTBOX
-132
+152
 233
-161
+181
 251
 right
 11
