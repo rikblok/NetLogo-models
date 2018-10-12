@@ -82,9 +82,9 @@ to find-max-speed
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+298
 10
-622
+710
 423
 -1
 -1
@@ -109,9 +109,9 @@ ticks
 30.0
 
 BUTTON
-29
+72
 152
-166
+209
 185
 NIL
 go
@@ -126,9 +126,9 @@ NIL
 0
 
 INPUTBOX
-112
+138
 265
-197
+249
 325
 dn-rt
 1.0, 1.5
@@ -139,7 +139,7 @@ String
 INPUTBOX
 30
 265
-115
+141
 325
 dn-lft
 -0.5, -0.5
@@ -148,9 +148,9 @@ dn-lft
 String
 
 INPUTBOX
-112
+138
 228
-197
+249
 288
 up-rt
 0.0, 0.0
@@ -161,7 +161,7 @@ String
 INPUTBOX
 30
 228
-115
+141
 288
 up-lft
 1.5, 1.0
@@ -172,7 +172,7 @@ String
 TEXTBOX
 30
 210
-197
+252
 249
 Payoff matrix:
 11
@@ -180,59 +180,59 @@ Payoff matrix:
 0
 
 TEXTBOX
-62
-363
-161
-381
+113
+364
+212
+382
 Blue = fast
 11
 105.0
 1
 
 TEXTBOX
-63
-398
-159
-416
+114
+399
+210
+417
 Red = slow
 11
 15.0
 1
 
 TEXTBOX
-53
-381
-157
-399
+104
+382
+208
+400
 Green = medium
 11
 55.0
 1
 
 TEXTBOX
-51
-346
-146
-364
+102
+347
+197
+365
 Colour = speed
 11
 0.0
 1
 
 TEXTBOX
-20
-32
-199
-131
-Instructions:\n1. Press go.\n2. Enter payoffs in the matrix.\n3. Click on graph to plot trajectories.\n\nx = frequency of row \"up\" strategy\ny = frequency of col \"left\" strategy
+22
+15
+201
+127
+Instructions:\n1. Press go.\n2. Enter payoffs in the matrix.\n3. Click on graph to plot trajectories.\n4. Adjust \"model speed\" slider.\n\nx = frequency of row \"up\" strategy\ny = frequency of col \"left\" strategy
 11
 0.0
 1
 
 TEXTBOX
-211
+299
 432
-252
+340
 450
 x=0
 11
@@ -240,9 +240,9 @@ x=0
 1
 
 TEXTBOX
-604
+692
 431
-638
+726
 449
 x=1
 11
@@ -250,9 +250,9 @@ x=1
 1
 
 TEXTBOX
-181
+269
 405
-212
+300
 423
 y=0
 11
@@ -260,9 +260,9 @@ y=0
 1
 
 TEXTBOX
-181
+269
 13
-208
+296
 31
 y=1
 11
@@ -290,20 +290,20 @@ dn
 1
 
 TEXTBOX
-71
-233
-101
-251
+87
+232
+117
+250
 left
 11
 0.0
 1
 
 TEXTBOX
-152
-233
-181
-251
+196
+232
+225
+250
 right
 11
 0.0
