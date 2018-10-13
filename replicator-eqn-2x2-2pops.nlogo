@@ -3,6 +3,8 @@ globals
   pay-row-dl pay-col-dl    pay-row-dr pay-col-dr
   max-speed-sq
   old-matrix
+  trajectory-speed
+  arrow-duration
 ]
 
 to startup
@@ -12,7 +14,8 @@ end
 
 to setup
   clear-all
-
+  set trajectory-speed 0.4 ; looks ok in web to me
+  set arrow-duration int ( max-pxcor + max-pycor ) / trajectory-speed
   set old-matrix ( word up-left up-right dn-left dn-right )
   update-payoffs
   find-max-speed ; do after getting payoffs
@@ -39,9 +42,9 @@ to go
   [ facexy xcor + dx-dt  ycor + dy-dt
     let scale sqrt ( speed-sq / max-speed-sq ) ; 0 <= scale <~ 1
     set color hsb ( 240 * scale ) 100 100
-    fd 0.1 * max list ( min list scale 1 ) 0.01
+    fd trajectory-speed * max list ( min list scale 1 ) 0.01
   ]
-  if ticks = 2000 [ ask turtles [ hide-turtle ] ]
+  if ticks = arrow-duration [ ask turtles [ hide-turtle ] ]
   tick
 end
 
@@ -185,11 +188,11 @@ up-left
 String
 
 TEXTBOX
-30
+23
 205
-287
+288
 244
-Payoff matrix:
+   Payoff matrix:
 11
 0.0
 0
