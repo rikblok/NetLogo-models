@@ -14,7 +14,7 @@ end
 
 to setup
   clear-all
-  set trajectory-speed 0.4 ; looks ok in web to me
+  set trajectory-speed 1.0 ; looks ok in web to me
   set arrow-duration int ( max-pxcor + max-pycor ) / trajectory-speed
   set old-matrix ( word up-left up-right dn-left dn-right )
   update-payoffs
@@ -34,6 +34,7 @@ to go
     create-turtles 1
     [ setxy mouse-xcor mouse-ycor
       pen-down
+      set pen-size 2
       set size 5
     ]
   ]
