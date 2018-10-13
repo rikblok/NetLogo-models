@@ -1,24 +1,21 @@
 globals
 [ pay-row-ul pay-col-ul    pay-row-ur pay-col-ur
   pay-row-dl pay-col-dl    pay-row-dr pay-col-dr
-  max-speed2
+  max-speed-sq
   old-matrix
 ]
 
 to startup
   setup
+  set old-matrix ""
 end
 
 to setup
   clear-all
 
-  find-max-speed
-
   set old-matrix ( word up-left up-right dn-left dn-right )
-  ;; todo: get payoffs
-  set pay-row-ul  1.5 set pay-col-ul  1.0    set pay-row-ur 0.0 set pay-col-ur 0.0
-  set pay-row-dl -0.5 set pay-col-dl -0.5    set pay-row-dr 1.0 set pay-col-dr 1.5
-
+  update-payoffs
+  find-max-speed ; do after getting payoffs
   reset-ticks
 end
 
@@ -40,8 +37,7 @@ to go
   ; continue current trajectory
   ask turtles
   [ facexy xcor + dx-dt  ycor + dy-dt
-    let speed2 dx-dt ^ 2 + dy-dt ^ 2
-    let scale sqrt ( speed2 / max-speed2 )
+    let scale sqrt ( speed-sq / max-speed-sq ) ; 0 <= scale <~ 1
     set color hsb ( 240 * scale ) 100 100
     fd 0.1 * max list ( min list scale 1 ) 0.01
   ]
@@ -68,18 +64,36 @@ end
 
 to find-max-speed
 ; sample to find
-  set max-speed2 0
   clear-turtles
-  create-turtles 1 [ hide-turtle ]
-  repeat 1000
-  [ let speed2 0
-    ask turtles
-    [ setxy random-xcor random-ycor
-      set speed2 ( dx-dt ^ 2 + dy-dt ^ 2 )
-    ]
-    if speed2 > max-speed2 [ set max-speed2 speed2 ]
+  create-turtles 1000
+  [ hide-turtle
+    setxy random-xcor random-ycor
   ]
-  set max-speed2 max-speed2
+  set max-speed-sq max [ speed-sq ] of turtles
+  clear-turtles
+end
+
+to-report speed-sq
+; speed-squared
+  report dx-dt ^ 2 + dy-dt ^ 2
+end
+
+to update-payoffs
+; get payoffs from input matrix
+  set pay-row-ul pair-first up-left     set pay-col-ul pair-second up-left
+  set pay-row-ur pair-first up-right    set pay-col-ur pair-second up-right
+  set pay-row-dl pair-first dn-left     set pay-col-dl pair-second dn-left
+  set pay-row-dr pair-first dn-right    set pay-col-dr pair-second dn-right
+end
+
+to-report pair-first [ pair ]
+  let comma-pos position "," pair
+  report read-from-string substring pair 0 comma-pos
+end
+
+to-report pair-second [ pair ]
+  let comma-pos position "," pair
+  report read-from-string substring pair ( comma-pos + 1 ) length pair
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -124,7 +138,7 @@ NIL
 NIL
 NIL
 NIL
-0
+1
 
 INPUTBOX
 156
@@ -172,9 +186,9 @@ String
 
 TEXTBOX
 30
-210
+205
 287
-249
+244
 Payoff matrix:
 11
 0.0
@@ -292,9 +306,9 @@ dn
 
 TEXTBOX
 97
-231
+226
 127
-249
+244
 left
 11
 0.0
@@ -302,9 +316,9 @@ left
 
 TEXTBOX
 215
-231
+226
 244
-249
+244
 right
 11
 0.0
