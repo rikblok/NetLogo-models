@@ -34,7 +34,7 @@ to go
     create-turtles 1
     [ setxy mouse-xcor mouse-ycor
       pen-down
-      set pen-size 2
+      set pen-size 2 ; doesn't work on web
       set size 5
     ]
   ]
@@ -101,10 +101,10 @@ to-report pair-second [ pair ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-298
-10
-710
-423
+297
+40
+709
+453
 -1
 -1
 4.0
@@ -128,10 +128,10 @@ ticks
 30.0
 
 BUTTON
-72
-152
-209
-185
+30
+158
+153
+191
 NIL
 go
 T
@@ -150,7 +150,7 @@ INPUTBOX
 285
 325
 dn-right
-1.0, 1.5
+0.7, 0.3
 1
 0
 String
@@ -161,7 +161,7 @@ INPUTBOX
 159
 325
 dn-left
--0.5, -0.5
+0.0, 0.0
 1
 0
 String
@@ -172,7 +172,7 @@ INPUTBOX
 285
 288
 up-right
-0.0, 0.0
+0.4, 0.6
 1
 0
 String
@@ -183,7 +183,7 @@ INPUTBOX
 159
 288
 up-left
-1.5, 1.0
+0.4, 0.6
 1
 0
 String
@@ -199,40 +199,40 @@ TEXTBOX
 0
 
 TEXTBOX
-113
-364
-212
-382
+133
+399
+232
+417
 Blue = fast
 11
 105.0
 1
 
 TEXTBOX
-114
-399
-210
-417
+134
+434
+230
+452
 Red = slow
 11
 15.0
 1
 
 TEXTBOX
-104
-382
-208
-400
+124
+417
+228
+435
 Green = medium
 11
 55.0
 1
 
 TEXTBOX
-102
-347
-197
-365
+122
+382
+217
+400
 Colour = speed
 11
 0.0
@@ -242,48 +242,48 @@ TEXTBOX
 22
 15
 201
-127
-Instructions:\n1. Press go.\n2. Enter payoffs in the matrix.\n3. Click on graph to plot trajectories.\n4. Adjust \"model speed\" slider.\n\nx = frequency of row \"up\" strategy\ny = frequency of col \"left\" strategy
+141
+Instructions:\n1. Press go.\n2. Enter payoffs in the matrix \n   (hit Enter).\n3. Click on graph to plot trajectories.\n4. Adjust \"model speed\" slider.\n\nx = frequency of row \"up\" strategy\ny = frequency of col \"left\" strategy
 11
 0.0
 1
 
 TEXTBOX
-299
-432
-340
-450
-x=0
+298
+454
+371
+485
+x=0, y=0\n(all dn-right)
 11
 0.0
 1
 
 TEXTBOX
-692
-431
-726
-449
-x=1
+653
+454
+716
+485
+   x=1, y=0\n(all up-right)
 11
 0.0
 1
 
 TEXTBOX
-269
-405
-300
-423
-y=0
+656
+10
+716
+41
+  x=1, y=1\n(all up-left)
 11
 0.0
 1
 
 TEXTBOX
-269
-13
-296
-31
-y=1
+298
+10
+371
+38
+x=0, y=1\n(all dn-left)
 11
 0.0
 1
@@ -326,6 +326,23 @@ TEXTBOX
 right
 11
 0.0
+1
+
+BUTTON
+162
+158
+285
+191
+clear
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
 1
 
 @#$#@#$#@
