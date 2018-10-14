@@ -250,28 +250,28 @@ Instructions:\n1. Press go.\n2. Enter payoffs in the matrix \n   (hit Enter).\n3
 
 TEXTBOX
 298
-454
+452
 371
-485
+483
 x=0, y=0\n(all dn-right)
 11
 0.0
 1
 
 TEXTBOX
-653
-454
-716
-485
+644
+452
+707
+483
    x=1, y=0\n(all up-right)
 11
 0.0
 1
 
 TEXTBOX
-656
+645
 10
-716
+705
 41
   x=1, y=1\n(all up-left)
 11
