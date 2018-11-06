@@ -59,7 +59,7 @@ end
 ;-------------------------------------------------------------------------------
 to presets
   reset-same-players
-  add-2016w
+  ;add-2016w
   add-common
   ; zero-determinant strategies
   add-extortionist
@@ -408,7 +408,7 @@ to evolve
     ; define fitness
     ask turtles
     [ set my-generation generation
-      set fitness (avg-score + min-score)
+      set fitness (avg-score - min-score) ; should be minus - Rik, 2018-11-05
     ]
 
     ; make next generation
@@ -804,7 +804,7 @@ C_on_1st
 C_on_1st
 0
 100
-96.0
+13.0
 1
 1
 %
@@ -819,7 +819,7 @@ C_after_CC
 C_after_CC
 0
 100
-20.0
+36.0
 1
 1
 %
@@ -834,7 +834,7 @@ C_after_CD
 C_after_CD
 0
 100
-84.0
+66.0
 1
 1
 %
@@ -849,7 +849,7 @@ C_after_DC
 C_after_DC
 0
 100
-54.0
+55.0
 1
 1
 %
@@ -864,7 +864,7 @@ C_after_DD
 C_after_DD
 0
 100
-17.0
+68.0
 1
 1
 %
@@ -1430,7 +1430,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.2
+NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
