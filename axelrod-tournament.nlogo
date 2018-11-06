@@ -3,7 +3,7 @@
 ; tournaments yourself by creating some strategies and testing them in an
 ; iterated Prisoner's Dilemma.
 ;
-; By Rik Blok, 2016 <http://www.zoology.ubc.ca/~rikblok/wiki/doku.php>
+; By Rik Blok, 2018 <http://www.zoology.ubc.ca/~rikblok/wiki/doku.php>
 ;
 ; This is free and unencumbered software released into the public domain.
 ;
@@ -991,7 +991,7 @@ Let's construct a simple scenario to highlight the problem.  Consider an interac
 * If I cooperate I pay a cost _c_ and
 * If you cooperate I receive a benefit _b_.
 
-If you and I are playing this [Prisoner's Dilemma](https://en.wikipedia.org/wiki/Prisoner%27s_dilemma) game what should we choose?  Clearly it would be best for both of us if we could **cooperate** so we each earn a net amount of _b-c>0_.  But it would be better yet if we didn't pay the cost _c_.  If we both try to gain the highest payoff by avoiding the cost then we will get nothing (because nobody generated the benefit).  Cooperation is undermined because _no matter what you choose_, _I_ always feel the temptation to **defect** and avoid paying the cost -- it is difficult for cooperation to arise and persist in this game.
+If you and I are playing this [Prisoner's Dilemma](https://en.wikipedia.org/wiki/Prisoner%27s_dilemma) game what should we choose?  Clearly it would be best for both of us if we could **cooperate** so we each earn a net amount of _b-c>0_.  But it would be even better for me if I didn't pay the cost _c_.  If we both try to gain the highest payoff by avoiding the cost then we will get nothing (because nobody generated the benefit).  Cooperation is undermined because _no matter what you choose_, _I_ always feel the temptation to **defect** and avoid paying the cost -- it is difficult for cooperation to arise and persist in this game.
 
 Repetition was proposed as a solution to this dilemma: perhaps if the players repeated the interaction many times, the prospect of reciprocal cooperation in the future would encourage players to cooperate now.
 
@@ -1033,7 +1033,7 @@ Click [presets] to explore other interesting strategies.
 
 ## evolve
 
-The [evolve] button allows the user to explore how the population of strategies evolves over many tournaments.  Between each tournament a new generation of strategies is created by sampling the current generation.  The probability of each strategy reproducing into the next generation is proportional to its average score plus **cost-to-self** (to guarantee a non-negative probability).
+The [evolve] button allows the user to explore how the population of strategies evolves over many tournaments.  Between each tournament a new generation of strategies is created by sampling the current generation.  The probability of each strategy reproducing into the next generation is proportional to how much better its score is than the lowest-scoring player in the population.  The lowest-scoring player therefore has zero probability of reproducing.
 
 
 # How to use it
@@ -1071,9 +1071,9 @@ Inspecting a player also populates the "Players:" view (name and strategy slider
 ### evolve
 
 In addition to running the tournament once and seeing the scores, it is possible to run it repeatedly, and select for the highest scoring strategies.  Each generation, the players are selected to form the next generation with likelihood [proportional to their fitness](https://en.wikipedia.org/wiki/Fitness_proportionate_selection) where
-> _fitness = average-score + cost-to-self_
+> _my-fitness = my-average-score - lowest average-score_
 
-so that the minimum probability of selection is never negative.
+so that the minimum probability of selection is never negative.  The lowest scoring strategies will have zero fitness and be removed from the population.
 
 The population size is conserved across generations.  Since lower-fitness strategies are less likely to be copied into the next generation this evolutionary process selects for higher fitness strategies.
 
