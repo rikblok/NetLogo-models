@@ -1017,8 +1017,8 @@ Instead, each strategy consists of a set of five numbers, representing the proba
 * **C_on_1st** = probability that I **cooperate** in the first round.
 * **C_after_CC** = probability that I **cooperate** after _we both cooperated_ in the previous round.
 * **C_after_CD** = probability that I **cooperate** after _I cooperated_ and _you defected_ in the previous round.
-* **C_after_CD** = probability that I **cooperate** after _I defected_ and _you cooperated_ in the previous round.
-* **C_after_CC** = probability that I **cooperate** after _we both defected_ in the previous round.
+* **C_after_DC** = probability that I **cooperate** after _I defected_ and _you cooperated_ in the previous round.
+* **C_after_DD** = probability that I **cooperate** after _we both defected_ in the previous round.
 
 Even though this severely limits the available strategies, it is still possible to create some well-known strategies:
 
