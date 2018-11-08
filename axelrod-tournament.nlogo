@@ -60,12 +60,34 @@ end
 to presets
   reset-same-players
   ;add-2016w
+  add-2018w
   add-common
   ; zero-determinant strategies
   add-extortionist
   add-equalizer
   add-generous
   output-print "Preset players added."
+end
+;-------------------------------------------------------------------------------
+to add-2018w
+  add-preset "Nic"       100 100   5  80  60
+  add-preset "Jee"       100 100   0   0   0
+  add-preset "MaA"       100  95  10 100  10
+  add-preset "EmC"         0 100   0  80  50
+  add-preset "EmD"       100  80   0  80   0
+  add-preset "Jos"        90 100  50  90  90
+  add-preset "Hun"       100 100 100 100 100
+  add-preset "Kat"       100 100   0   0   0
+  add-preset "Shi"       100 100   0 100   0
+  add-preset "Dia"       100  80   0  30   0
+  add-preset "Jul"       100  90  10  50  10
+  add-preset "Cur"       100 100   1  25   1
+  add-preset "C-A"       100 100   0  50   0
+  add-preset "Lea"       100 100   0   0   0
+  add-preset "Ale"       100 100   0 100   0
+  add-preset "Jas"       100 100   0 100   0
+  add-preset "Mir"       100 100   0   0 100
+  output-print "Strategies from UBC ISCI 344 2018W class added."
 end
 ;-------------------------------------------------------------------------------
 to add-2016w
@@ -485,7 +507,7 @@ to layout
   ask center-turtle [ die ]
 end
 ;-------------------------------------------------------------------------------
-to mutate
+to mutate-old
   if ancestor = 0 [set ancestor my-name]
   let which random 5 ; pick one of the 5 strategies to mutate
   if  which = 0 [ set c-on-first random-float 1 ]
@@ -496,13 +518,24 @@ to mutate
   generate-name
 end
 ;-------------------------------------------------------------------------------
+to mutate
+  if ancestor = 0 [set ancestor my-name]
+  set c-on-first random-float 1
+  set c-after-cc random-float 1
+  set c-after-cd random-float 1
+  set c-after-dc random-float 1
+  set c-after-dd random-float 1
+  generate-name
+end
+;-------------------------------------------------------------------------------
 to generate-name
   set my-name
-  ( word coop-to-letter c-on-first
-    coop-to-letter c-after-cc
-    coop-to-letter c-after-cd
-    coop-to-letter c-after-dc
-    coop-to-letter c-after-dd
+  ( word
+      coop-to-letter c-on-first
+      coop-to-letter c-after-cc
+      coop-to-letter c-after-cd
+      coop-to-letter c-after-dc
+      coop-to-letter c-after-dd
   )
 end
 ;-------------------------------------------------------------------------------
@@ -804,7 +837,7 @@ C_on_1st
 C_on_1st
 0
 100
-13.0
+99.0
 1
 1
 %
@@ -819,7 +852,7 @@ C_after_CC
 C_after_CC
 0
 100
-36.0
+93.0
 1
 1
 %
@@ -834,7 +867,7 @@ C_after_CD
 C_after_CD
 0
 100
-66.0
+94.0
 1
 1
 %
@@ -849,7 +882,7 @@ C_after_DC
 C_after_DC
 0
 100
-55.0
+82.0
 1
 1
 %
@@ -864,7 +897,7 @@ C_after_DD
 C_after_DD
 0
 100
-68.0
+45.0
 1
 1
 %
@@ -930,7 +963,7 @@ how-many
 how-many
 1
 50
-1.0
+4.0
 1
 1
 NIL
@@ -955,8 +988,8 @@ NIL
 
 OUTPUT
 249
-345
-715
+317
+712
 504
 11
 
