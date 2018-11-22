@@ -1,7 +1,6 @@
-;==================== begin axelrod-tournament.nlogo ========================
-; axelrod-tournament - This NetLogo model allows you to try Axelrod's
-; tournaments yourself by creating some strategies and testing them in an
-; iterated Prisoner's Dilemma.
+;==================== begin iterated-staghunt.nlogo ========================
+; iterated-staghunt - This NetLogo model allows you to try iterated stag-hunt
+; tournaments yourself by creating some strategies and testing them.
 ;
 ; By Rik Blok, 2018 <http://www.zoology.ubc.ca/~rikblok/wiki/doku.php>
 ;
@@ -12,7 +11,7 @@
 ; binary, for any purpose, commercial or non-commercial, and by any
 ; means.
 ;
-; See <https://github.com/rikblok/NetLogo-models/commits/master/axelrod-tournament.nlogo>
+; See <https://github.com/rikblok/NetLogo-models/commits/master/iterated-staghunt.nlogo>
 ; for change history.
 ;-------------------------------------------------------------------------------
 globals
@@ -41,9 +40,9 @@ turtles-own
 ]
 ;-------------------------------------------------------------------------------
 to startup
-  output-print "This NetLogo model allows you to try Axelrod's"
+  output-print "This NetLogo model allows you to try iterated stag-hunt"
   output-print "tournaments yourself by creating some strategies and"
-  output-print "testing them in an iterated Prisoner's Dilemma."
+  output-print "testing them."
   reset-new-players
 end
 ;-------------------------------------------------------------------------------
@@ -585,7 +584,7 @@ to inspect-players
   ; if user clicked on player then stop inspect-players
   if do-stop? [ stop ]
 end
-;====================== end axelrod-tournament.nlogo ========================
+;====================== end iterated-staghunt.nlogo ========================
 @#$#@#$#@
 GRAPHICS-WINDOW
 249
