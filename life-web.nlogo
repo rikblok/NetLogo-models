@@ -14,11 +14,13 @@ to startup
 end
 
 to setup
+  if (world-size = " 16x16 ") [ resize-world 0  15 0  15 ]
+  if (world-size = " 32x32 ") [ resize-world 0  31 0  31 ]
   if (world-size = " 64x64 ") [ resize-world 0  63 0  63 ]
   if (world-size = "128x128") [ resize-world 0 127 0 127 ]
   if (world-size = "256x256") [ resize-world 0 255 0 255 ]
   if (world-size = "512x512") [ resize-world 0 511 0 511 ]
-  ;if not netlogo-web? [ set-patch-size (512 / world-width) ]
+  set-patch-size (512 / world-width)
   clear-all
   ask patches [
     if (random 100 < initial-density) [set pcolor yellow]
@@ -258,8 +260,8 @@ CHOOSER
 55
 world-size
 world-size
-" 64x64 " "128x128" "256x256" "512x512"
-1
+" 16x16 " " 32x32 " " 64x64 " "128x128" "256x256" "512x512"
+3
 
 MONITOR
 11
@@ -557,7 +559,7 @@ Polygon -6459832 true true 38 138 66 149
 Polygon -6459832 true true 46 128 33 120 21 118 11 123 3 138 5 160 13 178 9 192 0 199 20 196 25 179 24 161 25 148 45 140
 Polygon -6459832 true true 67 122 96 126 63 144
 @#$#@#$#@
-NetLogo 6.0.2
+NetLogo 6.1.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
