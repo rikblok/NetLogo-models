@@ -145,9 +145,9 @@ NIL
 
 BUTTON
 10
-184
+210
 188
-217
+243
 NIL
 go
 T
@@ -162,9 +162,9 @@ NIL
 
 SLIDER
 10
-143
+169
 188
-176
+202
 synchronicity
 synchronicity
 1
@@ -176,10 +176,10 @@ synchronicity
 HORIZONTAL
 
 SWITCH
-10
-304
-188
-337
+9
+420
+187
+453
 fade
 fade
 0
@@ -188,9 +188,9 @@ fade
 
 PLOT
 11
-344
-186
-494
+540
+719
+690
 density
 ticks
 density (%)
@@ -220,10 +220,10 @@ initial-density
 HORIZONTAL
 
 BUTTON
-10
-224
-188
-257
+9
+340
+187
+373
 NIL
 draw
 T
@@ -237,10 +237,10 @@ NIL
 1
 
 BUTTON
-10
-264
-188
-297
+9
+380
+187
+413
 NIL
 bump
 NIL
@@ -264,10 +264,10 @@ world-size
 3
 
 MONITOR
-11
-500
-186
-553
+12
+252
+187
+305
 speed (ticks/s)
 ticks / time-elapsed
 2
