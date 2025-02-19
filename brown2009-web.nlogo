@@ -181,7 +181,7 @@ end
 ; diffuse-individual - random walk for individuals.  Respects non-wrapping
 ; world boundaries.
 ;
-; By Rik Blok, 2013 <http://www.zoology.ubc.ca/~rikblok/wiki/doku.php>
+; By Rik Blok, 2013 <https://www.cs.ubc.ca/~rikblok/>
 ;
 ; This is free and unencumbered software released into the public domain.
 ;
@@ -245,7 +245,7 @@ end
 ;==================== begin output-wrap.nls ====================================
 ; output-wrap - Same as output-print but wraps printed output.
 ;
-; By Rik Blok, 2013 <http://www.zoology.ubc.ca/~rikblok/wiki/doku.php>
+; By Rik Blok, 2013 <https://www.cs.ubc.ca/~rikblok/>
 ;
 ; This is free and unencumbered software released into the public domain.
 ;
@@ -344,7 +344,7 @@ end
 ;   doi:10.1063/1.2745299.
 ;   http://link.aip.org/link/JCPSA6/v126/i22/p224101/s1&Agg=doi.
 ;
-; By Rik Blok, 2013 <http://www.zoology.ubc.ca/~rikblok/wiki/doku.php>
+; By Rik Blok, 2013 <https://www.cs.ubc.ca/~rikblok/>
 ;
 ; This is free and unencumbered software released into the public domain.
 ;
@@ -633,7 +633,7 @@ end
 ;==================== begin sigfigs.nls ========================================
 ; sigfigs - Like precision but specifies number of significant figures.
 ;
-; By Rik Blok, 2013 <http://www.zoology.ubc.ca/~rikblok/wiki/doku.php>
+; By Rik Blok, 2013 <https://www.cs.ubc.ca/~rikblok/>
 ;
 ; This is free and unencumbered software released into the public domain.
 ;
@@ -802,7 +802,7 @@ end
 ;  NetLogo that don't support it.
 ;
 ; Converted from <https://github.com/NetLogo/NetLogo/blob/5.x/src/main/org/nlogo/prim/etc/_randompoisson.java>
-; By Rik Blok, 2015 <http://www.zoology.ubc.ca/~rikblok/wiki/doku.php>
+; By Rik Blok, 2015 <https://www.cs.ubc.ca/~rikblok/>
 ;
 ; This is free and unencumbered software released into the public domain.
 ;
@@ -1138,7 +1138,7 @@ OUTPUT
 
 A [NetLogo] model by Rik Blok.
 
-[http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:popmod:brown2009:start](http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:popmod:brown2009:start)
+[https://www.cs.ubc.ca/~rikblok/science/models/brown2009/index.html]
 
 This agent-based model represents a bacterial infection as described in [[Brown2009]].  It is assumed the wild type (W) produces a public good (F) which benefits all.  To combat the infection the population is innoculated with a "cheater" strain (C).  Changes are simply represented as elementary reactions between (local) agents:
 

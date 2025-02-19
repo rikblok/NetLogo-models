@@ -362,7 +362,7 @@ end
 ;
 ; Converted from <https://github.com/NetLogo/NetLogo/blob/5.x/src/main/org/nlogo/prim/etc/_hsb.scala>
 ; and <http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/java/awt/Color.java>
-; By Rik Blok, 2015 <http://www.zoology.ubc.ca/~rikblok/wiki/doku.php>
+; By Rik Blok, 2015 <https://www.cs.ubc.ca/~rikblok/>
 ;
 ; This is free and unencumbered software released into the public domain.
 ;
@@ -773,7 +773,7 @@ NIL
 
 A [NetLogo] model by Rik Blok.
 
-[http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:popmod:mandelbrot_set:start](http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:popmod:mandelbrot_set:start)
+[https://www.cs.ubc.ca/~rikblok/science/models/mandelbrot_set/]
 
 Explore the [Mandelbrot Set](https://en.wikipedia.org/wiki/Mandelbrot_set) and these related fractals:
 

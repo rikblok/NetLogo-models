@@ -279,7 +279,7 @@ ticks / time-elapsed
 
 A [NetLogo] model by Rik Blok.
 
-[http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:conway_s_game_of_life:start](http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:conway_s_game_of_life:start)
+[https://www.cs.ubc.ca/~rikblok/science/models/game_of_life/]
 
 This [NetLogo] model implements [Conway's Game of Life](http://en.wikipedia.org/wiki/Conway%27s%20Game%20of%20Life) a [cellular automaton](http://en.wikipedia.org/wiki/cellular%20automata) [John Horton Conway](http://en.wikipedia.org/wiki/John%20Horton%20Conway) designed to be difficult to anticipate the dynamics of starting patterns.  This implementation incorporates some ideas I focused on in my research: finite-size effects  [[Blok97]] and asynchronous updating [[Blok99]].
 
@@ -321,14 +321,14 @@ This implementation defaults to _periodic_ boundary conditions: the left side ca
 
 ## References
 
-[[Blok97]] Hendrik J. Blok and Birger Bergersen. [Effect of boundary conditions on scaling in the "game of Life"](http://www.zoology.ubc.ca/~rikblok/wiki/lib/exe/fetch.php?media=ref:rik:blok97.pdf). _Phys. Rev. E_, 55:6249-52. doi:[10.1103/PhysRevE.55.6249](http://dx.doi.org/10.1103/PhysRevE.55.6249). 1997. 
+[[Blok97]] Hendrik J. Blok and Birger Bergersen. [Effect of boundary conditions on scaling in the "game of Life"](https://www.cs.ubc.ca/~rikblok/research/published/blok97/index.html). _Phys. Rev. E_, 55:6249-52. doi:[10.1103/PhysRevE.55.6249](http://dx.doi.org/10.1103/PhysRevE.55.6249). 1997. 
 
-[[Blok99]] Hendrik J. Blok and Birger Bergersen. [Synchronous versus asynchronous updating in the "game of life"](http://www.zoology.ubc.ca/~rikblok/wiki/lib/exe/fetch.php?media=ref:rik:blok99.pdf). _Phys. Rev. E_, 59:3876-9. doi:[10.1103/PhysRevE.59.3876](http://dx.doi.org/10.1103/PhysRevE.59.3876). 1999. 
+[[Blok99]] Hendrik J. Blok and Birger Bergersen. [Synchronous versus asynchronous updating in the "game of life"](https://www.cs.ubc.ca/~rikblok/research/published/blok99/index.html). _Phys. Rev. E_, 59:3876-9. doi:[10.1103/PhysRevE.59.3876](http://dx.doi.org/10.1103/PhysRevE.59.3876). 1999. 
 
 [[NetLogo]] Wilensky, U. NetLogo. [http://ccl.northwestern.edu/netlogo/](http://ccl.northwestern.edu/netlogo/). Center for Connected Learning and Computer-Based Modeling, Northwestern University. Evanston, IL. 1999.
 
-[Blok97]: http://www.zoology.ubc.ca/~rikblok/wiki/lib/exe/fetch.php?media=ref:rik:blok97.pdf
-[Blok99]: http://www.zoology.ubc.ca/~rikblok/wiki/lib/exe/fetch.php?media=ref:rik:blok99.pdf
+[Blok97]: https://www.cs.ubc.ca/~rikblok/research/published/blok97/index.html
+[Blok99]: https://www.cs.ubc.ca/~rikblok/research/published/blok99/index.html
 [NetLogo]: http://ccl.northwestern.edu/netlogo/
 @#$#@#$#@
 default
