@@ -254,7 +254,7 @@ OUTPUT
 
 A [NetLogo] model by Rik Blok.
 
-[http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:popmod:flame:start](http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:popmod:flame:start)
+[https://www.cs.ubc.ca/~rikblok/science/models/flame/]
 
 This is a simple particle-based simulation of flames.  Individual "particles" of flame are produced at the bottom of the world and burn as they float up.  It's not meant to capture real fire dynamics but just simulate the look.
 

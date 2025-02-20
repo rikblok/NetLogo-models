@@ -3,7 +3,7 @@
 ; tournaments yourself by creating some strategies and testing them in an
 ; iterated Prisoner's Dilemma.
 ;
-; By Rik Blok, 2018 <http://www.zoology.ubc.ca/~rikblok/wiki/doku.php>
+; By Rik Blok, 2018 <https://www.cs.ubc.ca/~rikblok/>
 ;
 ; This is free and unencumbered software released into the public domain.
 ;
@@ -1015,7 +1015,7 @@ NIL
 
 A [NetLogo] model by Rik Blok.
 
-[http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:popmod:axelrod_s_tournament:start](http://www.zoology.ubc.ca/~rikblok/wiki/doku.php?id=science:popmod:axelrod_s_tournament:start)
+[https://www.cs.ubc.ca/~rikblok/science/models/axelrods_tournament/]
 
 How can cooperation arise and persist when there is a temptation to "defect" from cooperation for personal gain?  [Cooperation](https://en.wikipedia.org/wiki/Cooperation) is a well-studied problem in economics, social sciences, and evolution.
 
