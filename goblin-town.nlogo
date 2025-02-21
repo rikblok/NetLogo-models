@@ -7,7 +7,8 @@ globals            ; variables common to whole model
   start-patch        ; patch where dwarves start
   finish-patch       ; patch dwarves are trying to get to
   num-dwarves        ; number of dwarves at start
-  num-living-dwarves ; number of dwarves not killed by nasty goblins
+  num-free-dwarves   ; number of dwarves not captured by nasty goblins
+  sound-threshold    ; threshold of hearing
 ]
 patches-own              ; variables held by each patch
 [ platform-index           ; each platform is numbered.  Used to connect platforms via bridges
@@ -32,7 +33,7 @@ goblins-own [health]
 
 to turn-dwarf
   ;;;;;; YOUR CODE GOES HERE!
-   face-towards-escape
+   face-random-direction
 end
 
 ;---------------------------------------------------------
@@ -45,7 +46,7 @@ end
 ;---------------------------------------------------------
 
 ; a bunch of one-liner face-... procedures
-to face-towards-escape          face max-one-of neighbors [escape-light]               end
+to face-towards-escape          face max-one-of neighbors [escape-light]            end
 to face-away-from-escape        face-towards-escape                       right 180 end
 to face-towards-dwarf-sounds    face max-one-of neighbors [dwarf-sounds]            end
 to face-away-from-dwarf-sounds  face-towards-dwarf-sounds                 right 180 end
@@ -122,12 +123,12 @@ to go
   tick
   if not any? dwarves
   [ output-print "" ; blank line
-    ifelse num-living-dwarves = num-dwarves
+    ifelse num-free-dwarves = num-dwarves
     [ output-print "All the dwarves escaped!"
     ]
-    [ output-print (word num-living-dwarves " of " num-dwarves " dwarves escaped!")
+    [ output-print (word num-free-dwarves " of " num-dwarves " dwarves escaped!")
       output-print "Sadly, the others were"
-      output-print "murdered by goblins :'("
+      output-print "captured by goblins :'("
     ]
     output-print (word "in " ticks " ticks.")
     output-print ""
@@ -218,6 +219,7 @@ end
 ;---------------------------------------------------------
 
 to setup-sounds
+  set sound-threshold 1e-20
   output-type "Setting up sounds ... "
   ; setup escape-light on path
   ask finish-patch [ set escape-light count patches ] ; a big positive number
@@ -246,7 +248,7 @@ end
 to setup-dwarves [ num-dwarves-param ]
   output-print (word "Setting up " num-dwarves-param " dwarves ... ")
   set num-dwarves num-dwarves-param
-  set num-living-dwarves num-dwarves
+  set num-free-dwarves num-dwarves
   let names
   [ "Dwalin" "Balin" "Kili" "Fili" "Dori" "Nori" "Ori"
     "Oin" "Gloin" "Bifur" "Bofur" "Bombur" "Thorin"
@@ -299,7 +301,7 @@ to diffuse-dwarf-sounds-on-path
   [ set dwarf-sounds dwarf-sounds + diffuse-on-path-var
   ]
   ask dwarves [ set dwarf-sounds 100 ]
-  ask patches-on-path [ set dwarf-sounds 0.5 * dwarf-sounds ]
+  ask patches-on-path [ set dwarf-sounds max list ( 0.5 * dwarf-sounds ) sound-threshold ]
 end
 
 ;---------------------------------------------------------
@@ -318,7 +320,7 @@ to diffuse-goblin-sounds-on-path
   [ set goblin-sounds goblin-sounds + diffuse-on-path-var
   ]
   ask goblins [ set goblin-sounds 100 ]
-  ask patches-on-path [ set goblin-sounds 0.5 * goblin-sounds ]
+  ask patches-on-path [ set goblin-sounds max list ( 0.5 * goblin-sounds ) sound-threshold ]
 end
 
 ;---------------------------------------------------------
@@ -336,8 +338,8 @@ to dwarves-fight-goblins
       ; dwarf wounded
       set health health - 1
       if health <= 0
-      [ output-print (word name " killed by goblin!")
-        set num-living-dwarves num-living-dwarves - 1
+      [ output-print (word name " captured by goblins!")
+        set num-free-dwarves num-free-dwarves - 1
         die
       ]
     ]
@@ -417,7 +419,7 @@ to experiment
   repeat trials
   [ setup
     loop-go
-    type (word num-living-dwarves " ")
+    type (word num-free-dwarves " ")
   ]
   print "...done!"
 end
@@ -552,7 +554,7 @@ MONITOR
 180
 125
 NIL
-num-living-dwarves
+num-free-dwarves
 0
 1
 11
@@ -952,7 +954,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.2
+NetLogo 6.4.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
