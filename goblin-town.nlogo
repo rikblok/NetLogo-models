@@ -8,7 +8,6 @@ globals            ; variables common to whole model
   finish-patch       ; patch dwarves are trying to get to
   num-dwarves        ; number of dwarves at start
   num-free-dwarves   ; number of dwarves not captured by nasty goblins
-  sound-threshold    ; threshold of hearing
 ]
 patches-own              ; variables held by each patch
 [ platform-index           ; each platform is numbered.  Used to connect platforms via bridges
@@ -30,29 +29,80 @@ dwarves-own [health name]
 goblins-own [health]
 
 ;---------------------------------------------------------
+; face-... procedures that can be used in turn-dwarf and turn-goblin:
+;
+; face-towards-escape / face-away-from-escape
+; - use light from exit to orient.  Always available
+; face-towards-dwarf-sounds / face-away-from-dwarf-sounds
+; - use dwarf sounds to orient.  Only when dwarves nearby
+; face-towards-goblin-sounds / face-away-from-goblin-sounds
+; - use goblin sounds to orient.  Only when goblins nearby
+; face-random-direction
+; - randomly choose a direction
+; face-towards-nearby-dwarf
+; - face towards a neighbouring dwarf.  Only when there is at least one neighbouring dwarf
+; face-away-from-nearby-goblin
+; - face away from a neighbouring goblin.  Only when there is at least one neighbouring goblin
+; face-towards-leading-dwarf
+; - face towards dwarf who can see the most light from exit
+; face-towards-trailing-dwarf
+; - face towards dwarf who can see the least light from exit
+; wiggle <angle>
+; - turn randomly between [-<angle>, +<angle>] degrees but more likely to continue forward
+;---------------------------------------------------------
 
 to turn-dwarf
   ;;;;;; YOUR CODE GOES HERE!
-   face-random-direction
+  wiggle 30
+
 end
 
 ;---------------------------------------------------------
 
 to turn-goblin
   ;;;;;; YOUR CODE GOES HERE!
-  face-random-direction
+  wiggle 90
+
 end
 
 ;---------------------------------------------------------
 
-; a bunch of one-liner face-... procedures
-to face-towards-escape          face max-one-of neighbors [escape-light]            end
-to face-away-from-escape        face-towards-escape                       right 180 end
-to face-towards-dwarf-sounds    face max-one-of neighbors [dwarf-sounds]            end
-to face-away-from-dwarf-sounds  face-towards-dwarf-sounds                 right 180 end
-to face-towards-goblin-sounds   face max-one-of neighbors [goblin-sounds]           end
-to face-away-from-goblin-sounds face-towards-goblin-sounds                right 180 end
-to face-random-direction        right random 360                                    end
+; one-liner face-... procedures
+to face-towards-escape          face max-one-of neighbors [escape-light]   end
+to face-away-from-escape        face min-one-of neighbors [escape-light]   end
+to face-random-direction        right random 360                           end
+
+;---------------------------------------------------------
+
+to face-towards-dwarf-sounds
+  if any? neighbors with [dwarf-sounds > ([hearing-threshold] of myself)]
+  [ face max-one-of neighbors [dwarf-sounds]
+  ]
+end
+
+;---------------------------------------------------------
+
+to face-away-from-dwarf-sounds
+  if any? neighbors with [dwarf-sounds > ([hearing-threshold] of myself)]
+  [ face min-one-of neighbors [dwarf-sounds]
+  ]
+end
+
+;---------------------------------------------------------
+
+to face-towards-goblin-sounds
+  if any? neighbors with [goblin-sounds > ([hearing-threshold] of myself)]
+  [ face max-one-of neighbors [goblin-sounds]
+  ]
+end
+
+;---------------------------------------------------------
+
+to face-away-from-goblin-sounds
+  if any? neighbors with [goblin-sounds > ([hearing-threshold] of myself)]
+  [ face min-one-of neighbors [goblin-sounds]
+  ]
+end
 
 ;---------------------------------------------------------
 
@@ -219,7 +269,7 @@ end
 ;---------------------------------------------------------
 
 to setup-sounds
-  set sound-threshold 1e-20
+  ;set sound-threshold 1e-30
   output-type "Setting up sounds ... "
   ; setup escape-light on path
   ask finish-patch [ set escape-light count patches ] ; a big positive number
@@ -259,8 +309,8 @@ to setup-dwarves [ num-dwarves-param ]
     move-to start-patch
     forward random-float 1
     ; make dwarves stronger than goblins.
-    ; match total health for all dwarves = goblins
-    set health round ( 2 * num-goblins / num-dwarves )
+    ; total health for all dwarves < goblins, so they can't fight their way out
+    set health round ( 1.5 * num-goblins / num-dwarves )
     set size 5
     set name first names
     set label word name "   "
@@ -301,7 +351,7 @@ to diffuse-dwarf-sounds-on-path
   [ set dwarf-sounds dwarf-sounds + diffuse-on-path-var
   ]
   ask dwarves [ set dwarf-sounds 100 ]
-  ask patches-on-path [ set dwarf-sounds max list ( 0.5 * dwarf-sounds ) sound-threshold ]
+  ask patches-on-path [ set dwarf-sounds 0.5 * dwarf-sounds ]
 end
 
 ;---------------------------------------------------------
@@ -320,7 +370,7 @@ to diffuse-goblin-sounds-on-path
   [ set goblin-sounds goblin-sounds + diffuse-on-path-var
   ]
   ask goblins [ set goblin-sounds 100 ]
-  ask patches-on-path [ set goblin-sounds max list ( 0.5 * goblin-sounds ) sound-threshold ]
+  ask patches-on-path [ set goblin-sounds 0.5 * goblin-sounds ]
 end
 
 ;---------------------------------------------------------
@@ -370,7 +420,7 @@ to move-goblins
   [ if any? dwarves-here [ stop ] ; don't move if fighting with dwarves
     turn-goblin
     wiggle 30
-    forward-on-path 1.1 ; goblins are a bit faster than dwarves
+    forward-on-path 1.2 ; goblins are faster than dwarves
   ]
   repeat 3 [ diffuse-goblin-sounds-on-path ]
 end
@@ -437,15 +487,22 @@ to draw-patches
   ; colour patches by proximity to dwarf
   if draw = "dwarf-sounds"
   [ ask patches-on-path
-    [ set pcolor scale-color blue sqrt sqrt sqrt sqrt sqrt dwarf-sounds -0.2 1
+    [ set pcolor scale-color blue sqrt sqrt sqrt sqrt dwarf-sounds -0.2 1
     ]
   ]
   ; colour patches by proximity to goblin
   if draw = "goblin-sounds"
   [ ask patches-on-path
-    [  set pcolor scale-color red sqrt sqrt sqrt sqrt sqrt goblin-sounds -0.2 1
+    [  set pcolor scale-color red sqrt sqrt sqrt sqrt goblin-sounds -0.2 1
     ]
   ]
+end
+
+;---------------------------------------------------------
+
+to-report hearing-threshold
+  ; dwarves are more alert to danger than goblins are in Goblintown
+  report ifelse-value breed = dwarves [ 1e-5 ][ 1e-4 ]
 end
 
 ;---------------------------------------------------------
@@ -535,7 +592,7 @@ num-goblins
 num-goblins
 20
 180
-180.0
+100.0
 20
 1
 NIL
@@ -599,7 +656,7 @@ CHOOSER
 draw
 draw
 "escape-light" "dwarf-sounds" "goblin-sounds"
-2
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
